@@ -1,0 +1,37 @@
+﻿services:
+    api:
+        image: multisoftsrb
+        container_name: multisoftsrb_api
+        build:
+            context: .
+            dockerfile: Source/Dockerfile
+        restart: always
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_URLS=http://+:8080
+            - ASPNETCORE_HTTP_PORTS=8080
+            - ConnectionStrings__MainDatabase=Host=multisoftsrb_database;Port=5432;Database=main;Username=postgres;Password=postgres;Include Error Detail=true
+            - CompanyConnectionStrings__Values__1=Host=multisoftsrb_database;Port=5432;Database=finance;Username=postgres;Password=postgres;Include Error Detail=true
+            - CompanyConnectionStrings__Values__2=Host=multisoftsrb_database;Port=5432;Database=retail;Username=postgres;Password=postgres;Include Error Detail=true
+            - CompanyConnectionStrings__Values__3=Host=multisoftsrb_database;Port=5432;Database=manufacturing;Username=postgres;Password=postgres;Include Error Detail=true
+            - CompanyConnectionStrings__Values__4=Host=multisoftsrb_database;Port=5432;Database=service;Username=postgres;Password=postgres;Include Error Detail=true
+        ports:
+            - 8080:8080
+        depends_on:
+            - database
+    
+    database:
+        image: postgres:16
+        container_name: multisoftsrb_database
+        restart: always
+        environment:
+            - POSTGRES_DB=main
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        ports:
+            - 5432:5432
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+volumes:
+    postgres_data:
