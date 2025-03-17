@@ -88,8 +88,9 @@ public class UserProvider
     
     private async Task<string[]> FetchPagePermissionsAsync(long userId, long companyId)
     {
-        // SuperAdmin has all permissions
-        if (GetCurrentUserType() == UserType.SuperAdmin)
+        // SuperAdmin and TenantAdmin have all permissions
+        var userType = GetCurrentUserType();
+        if (userType is UserType.SuperAdmin or UserType.TenantAdmin)
             return PagePermissions.GetAll().ToArray();
         
         // Get user roles for the company
@@ -111,7 +112,7 @@ public class UserProvider
         return permissions;
     }
     
-    public async Task<string[]> GetResourcePermissionsAsync(long userId, long companyId)
+    public async Task<string[]> GetResourcePermissionsAsync(long userId, long companyId, UserType? userType = null)
     {
         // Generate cache key
         var cacheKey = $"{ResourcePermissionCachePrefix}{userId}_{companyId}";
@@ -126,14 +127,15 @@ public class UserProvider
         // Get from cache or compute if not found
         return await _cache.GetOrSetAsync(
             cacheKey,
-            async _ => await FetchResourcePermissionsAsync(userId, companyId),
+            async _ => await FetchResourcePermissionsAsync(userId, companyId, userType),
             options);
     }
     
-    private async Task<string[]> FetchResourcePermissionsAsync(long userId, long companyId)
+    private async Task<string[]> FetchResourcePermissionsAsync(long userId, long companyId, UserType? userType = null)
     {
-        // SuperAdmin has all permissions
-        if (GetCurrentUserType() == UserType.SuperAdmin)
+        // SuperAdmin and TenantAdmin have all permissions
+        userType ??= GetCurrentUserType();
+        if (userType is UserType.SuperAdmin or UserType.TenantAdmin)
             return ResourcePermissions.GetAll().ToArray();
         
         // Get page permissions first
