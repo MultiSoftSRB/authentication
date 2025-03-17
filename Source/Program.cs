@@ -76,10 +76,7 @@ app.UseAuthentication()
 app.UseOpenApi(c => c.Path = "/openapi/{documentName}.json");    
 app.MapScalarApiReference();
 
-if (app.Environment.IsDevelopment())
-{
-    app.ApplyMigrations();
-}
+app.ApplyMigrations();
 
 await app.SeedDataAsync();
 
