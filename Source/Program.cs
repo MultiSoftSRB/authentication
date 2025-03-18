@@ -45,6 +45,18 @@ builder.Services.Configure<CompanyConnectionStrings>(options =>
 
 #endregion
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReact", builder =>
+    {
+        builder.WithOrigins("http://localhost:4000") // Replace with your React app's URL
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials();
+    });
+});
+
+
 builder.Services.AddScoped<SignInManager<User>>();
 builder.Services
        .AddAuthenticationJwtBearer(s => s.SigningKey = builder.Configuration["JwtSettings:Secret"])
@@ -63,6 +75,7 @@ builder.Services.Configure<JwtCreationOptions>( o =>
 builder.Services.AddDataSeeding();
 
 var app = builder.Build();
+app.UseCors("AllowReact");
 app.UseAuthentication()
    .UseAuthorization()
    .UseFastEndpoints(
