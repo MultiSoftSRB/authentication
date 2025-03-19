@@ -42,14 +42,20 @@ public class TokenService
                 new Claim(CustomClaimTypes.DatabaseType, ((int)company.DatabaseType).ToString()));
         }
 
-        var token = JwtBearer.CreateToken( 
-            o => 
-            {
-                o.ExpireAt = DateTime.UtcNow.AddHours(1); 
-                o.User.Claims.AddRange(claims);
-            });
+        // Get the JWT settings from configuration
+        var jwtSettings = _configuration.GetSection("JwtSettings");
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        
+        var token = new JwtSecurityToken(
+            issuer: jwtSettings["Issuer"],
+            audience: jwtSettings["Audience"],
+            claims: claims,
+            notBefore: DateTime.Now,
+            expires: DateTime.Now.AddHours(int.Parse(jwtSettings["ExpiryMinutes"] ?? "15")),
+            signingCredentials: creds);
 
-        return token;
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     public async Task<RefreshToken> GenerateRefreshTokenAsync(long userId, long? companyId)
