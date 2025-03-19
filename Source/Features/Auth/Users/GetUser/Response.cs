@@ -5,7 +5,7 @@ namespace MultiSoftSRB.Features.Auth.Users.GetUser;
 sealed class Response
 {
     public long Id { get; set; }
-    public string? Email { get; set; }
+    public string Email { get; set; } = null!;
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
     public long RoleId { get; set; }

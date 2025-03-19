@@ -4,7 +4,16 @@ namespace MultiSoftSRB.Features.Auth.Login;
 
 sealed class Response
 {
-    public string AccessToken { get; set; } = null!;
-    public long UserId { get; set; }
-    public UserType UserType { get; set; }
+    public string AccessToken { get; set; }
+    public User UserDetails { get; set; }
+
+    internal sealed class User
+    {
+        public long Id { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string FullName { get; set; }
+        public UserType UserType { get; set; }
+        public string[] PagePermissions { get; set; } = [];
+    }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MultiSoftSRB.Auth;
 using MultiSoftSRB.Database.Main;
 using MultiSoftSRB.Entities.Main;
 using MultiSoftSRB.Entities.Main.Enums;
@@ -13,6 +14,7 @@ sealed class Endpoint : Endpoint<Request, Response>
     public SignInManager<User> SignInManager { get; set; }
     public MainDbContext DbContext { get; set; }
     public TokenService TokenService { get; set; }
+    public UserProvider UserProvider { get; set; }
     
     public override void Configure()
     {
@@ -82,12 +84,20 @@ sealed class Endpoint : Endpoint<Request, Response>
     
         HttpContext.Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
 
-        // Return response
-        await SendOkAsync(new Response 
+        var response = new Response
         {
             AccessToken = accessToken,
-            UserId = user.Id,
-            UserType = user.UserType
-        }, cancellation: cancellationToken);
+            UserDetails = new()
+            {
+                Id = user.Id,
+                UserType = user.UserType,
+                FullName = $"{user.FirstName} {user.LastName}",
+                Email = user.Email,
+                Username = user.UserName,
+                PagePermissions = company == null ? [] : await UserProvider.GetPagePermissionsAsync(user.Id, company.Id)
+            }
+        };
+        
+        await SendOkAsync(response, cancellation: cancellationToken);
     }
 }
