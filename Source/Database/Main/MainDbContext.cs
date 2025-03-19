@@ -15,6 +15,8 @@ public class MainDbContext : DbContext
     public DbSet<UserCompany> UserCompanies { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<ApiKey> ApiKeys { get; set; }
+    public DbSet<ApiKeyPermission> ApiKeyPermissions { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {
