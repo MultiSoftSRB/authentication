@@ -45,6 +45,17 @@ builder.Services.Configure<CompanyConnectionStrings>(options =>
 
 #endregion
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReact", policyConfig =>
+    {
+        policyConfig.WithOrigins(builder.Configuration["FrontendUrl"])
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials();
+    });
+});
+
 builder.Services.AddScoped<SignInManager<User>>();
 builder.Services
        .AddAuthenticationJwtBearer(s => s.SigningKey = builder.Configuration["JwtSettings:Secret"])
@@ -63,6 +74,7 @@ builder.Services.Configure<JwtCreationOptions>( o =>
 builder.Services.AddDataSeeding();
 
 var app = builder.Build();
+app.UseCors("AllowReact");
 app.UseAuthentication()
    .UseAuthorization()
    .UseFastEndpoints(
