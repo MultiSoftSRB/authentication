@@ -47,15 +47,14 @@ builder.Services.Configure<CompanyConnectionStrings>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReact", builder =>
+    options.AddPolicy("AllowReact", policyConfig =>
     {
-        builder.WithOrigins("http://localhost:4000") // Replace with your React app's URL
+        policyConfig.WithOrigins(builder.Configuration["FrontendUrl"])
                .AllowAnyMethod()
                .AllowAnyHeader()
                .AllowCredentials();
     });
 });
-
 
 builder.Services.AddScoped<SignInManager<User>>();
 builder.Services
