@@ -9,6 +9,7 @@ sealed class Endpoint : EndpointWithoutRequest<Response>
     public override void Configure()
     {
         Get("auth/refresh-token");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
