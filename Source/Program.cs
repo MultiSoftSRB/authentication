@@ -1,3 +1,4 @@
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -82,6 +83,10 @@ builder.Services
         };
     });
 
+builder.Services.AddOpenTelemetry().UseAzureMonitor(options => {
+    options.ConnectionString = builder.Configuration.GetConnectionString("AppInsights");
+});
+
 builder.Services.AddDataSeeding();
 
 var app = builder.Build();
@@ -109,7 +114,7 @@ app.UseAuthentication()
        });
 
 app.UseOpenApi(c => c.Path = "/openapi/{documentName}.json");    
-app.MapScalarApiReference();
+app.MapScalarApiReference("/");
 
 app.ApplyMigrations();
 
