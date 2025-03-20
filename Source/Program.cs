@@ -87,6 +87,7 @@ app.UseAuthentication()
            c.Binding.ReflectionCache.AddFromMultiSoftSRB();
            c.Errors.UseProblemDetails();
            c.Security.PermissionsClaimType = CustomClaimTypes.ResourcePermission;
+           c.Endpoints.Configurator = ep => ep.Description(b => b.Produces<InternalErrorResponse>(500));
        });
 
 app.UseOpenApi(c => c.Path = "/openapi/{documentName}.json");    
