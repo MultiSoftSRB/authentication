@@ -83,9 +83,14 @@ builder.Services
         };
     });
 
-builder.Services.AddOpenTelemetry().UseAzureMonitor(options => {
-    options.ConnectionString = builder.Configuration.GetConnectionString("AppInsights");
-});
+// Enable App Insights only for testing and production
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddOpenTelemetry().UseAzureMonitor(options => 
+    {
+        options.ConnectionString = builder.Configuration.GetConnectionString("AppInsights");
+    });
+}
 
 builder.Services.AddDataSeeding();
 
