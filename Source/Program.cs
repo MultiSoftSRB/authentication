@@ -85,9 +85,13 @@ builder.Services
 builder.Services.AddDataSeeding();
 
 var app = builder.Build();
+if (!app.Environment.IsDevelopment())
+    app.UseHsts();
+
 app.UseCors("AllowReact");
 app.UseAuthentication()
    .UseAuthorization()
+   .UseDefaultExceptionHandler(null, app.Environment.IsProduction(), app.Environment.IsProduction())
    .UseFastEndpoints(
        c =>
        {
@@ -98,6 +102,9 @@ app.UseAuthentication()
            {
                // Set default auth schemas for all endpoints
                ep.AuthSchemes(JwtBearerDefaults.AuthenticationScheme, ApiKeyAuthenticationHandler.SchemeName);
+               
+               // Set description for all endpoints that show which class is used as response in case of 500 status code
+               ep.Description(b => b.Produces<InternalErrorResponse>(500));
            };
        });
 
