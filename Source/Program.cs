@@ -74,9 +74,13 @@ builder.Services.Configure<JwtCreationOptions>( o =>
 builder.Services.AddDataSeeding();
 
 var app = builder.Build();
+if (!app.Environment.IsDevelopment())
+    app.UseHsts();
+
 app.UseCors("AllowReact");
 app.UseAuthentication()
    .UseAuthorization()
+   .UseDefaultExceptionHandler(null, app.Environment.IsProduction(), app.Environment.IsProduction())
    .UseFastEndpoints(
        c =>
        {
