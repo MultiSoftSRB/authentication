@@ -84,7 +84,7 @@ public class TokenService
     public async Task<(string AccessToken, RefreshToken RefreshToken)> RefreshTokenAsync(string token)
     {
         var refreshToken = await GetRefreshTokenAsync(token);
-        if (refreshToken == null || !refreshToken.IsActive || refreshToken.UserId != _userProvider.GetCurrentUserId())
+        if (refreshToken == null || !refreshToken.IsActive)
             throw new SecurityTokenException("Invalid refresh token");
 
         var currentUser = await _mainDbContext.Users.FindAsync(refreshToken.UserId);
