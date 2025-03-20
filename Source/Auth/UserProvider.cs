@@ -30,7 +30,8 @@ public class UserProvider
         if (userIdClaim != null && long.TryParse(userIdClaim.Value, out var userId)) 
             return userId;
         
-        throw new UnauthorizedAccessException("User ID is not present in the token.");
+        ValidationContext.Instance.ThrowError("User ID is not present in the token.", StatusCodes.Status401Unauthorized);
+        return default;
     }
     
     public long? GetCurrentCompanyId()

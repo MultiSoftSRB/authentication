@@ -23,7 +23,8 @@ public class CompanyProvider
 
         if (string.IsNullOrEmpty(companyClaim) || !long.TryParse(companyClaim, out long companyId))
         {
-            throw new ApplicationException("Company ID is not present in the token.");
+            ValidationContext.Instance.ThrowError("Company ID is not present in the token.", StatusCodes.Status401Unauthorized);
+            return default;
         }
 
         return companyId;
@@ -36,7 +37,8 @@ public class CompanyProvider
 
         if (string.IsNullOrEmpty(databaseClaim) || !Enum.TryParse(databaseClaim, out DatabaseType databaseType))
         {
-            throw new ApplicationException("Database information is missing in the token.");
+            ValidationContext.Instance.ThrowError("Database information is missing in the token.", StatusCodes.Status401Unauthorized);
+            return default;
         }
 
         return databaseType;
@@ -47,7 +49,8 @@ public class CompanyProvider
         var database = GetDatabaseType();
         if (!_connectionStrings.Values.TryGetValue((int)database, out string? connectionString))
         {
-            throw new ApplicationException("Invalid database selection.");
+            ValidationContext.Instance.ThrowError("Invalid database selection.", StatusCodes.Status401Unauthorized);
+            return default;
         }
 
         return connectionString;

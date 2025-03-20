@@ -84,8 +84,12 @@ public class TokenService
     public async Task<(string AccessToken, RefreshToken RefreshToken)> RefreshTokenAsync(string token)
     {
         var refreshToken = await GetRefreshTokenAsync(token);
+
         if (refreshToken == null || !refreshToken.IsActive || refreshToken.UserId != _userProvider.GetCurrentUserId())
-            throw new SecurityTokenException("Invalid refresh token");
+        {
+            ValidationContext.Instance.ThrowError("Invalid refresh token.", StatusCodes.Status400BadRequest);
+            return default;
+        }
 
         var currentUser = await _mainDbContext.Users.FindAsync(refreshToken.UserId);
 
@@ -97,9 +101,12 @@ public class TokenService
                 .Where(uc => uc.UserId == refreshToken.UserId && uc.CompanyId == refreshToken.CompanyId)
                 .Select(uc => uc.Company)
                 .SingleOrDefaultAsync();
-            
+
             if (company == null)
-                throw new SecurityTokenException("Company not active or not found");
+            {
+                ValidationContext.Instance.ThrowError("Company not active or not found", StatusCodes.Status400BadRequest);
+                return default;
+            }
             
             currentUser!.LastUsedCompanyId = company.Id;
             await _mainDbContext.SaveChangesAsync();
@@ -118,8 +125,12 @@ public class TokenService
     public async Task RevokeTokenAsync(string token)
     {
         var refreshToken = await GetRefreshTokenAsync(token);
+
         if (refreshToken == null || !refreshToken.IsActive)
-            throw new SecurityTokenException("Invalid token");
+        {
+            ValidationContext.Instance.ThrowError("Invalid token", StatusCodes.Status400BadRequest);
+            return;
+        }
 
         // Revoke token
         refreshToken.IsRevoked = true;
