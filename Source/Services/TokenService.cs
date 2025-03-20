@@ -52,7 +52,7 @@ public class TokenService
             audience: jwtSettings["Audience"],
             claims: claims,
             notBefore: DateTime.Now,
-            expires: DateTime.Now.AddHours(int.Parse(jwtSettings["ExpiryMinutes"] ?? "15")),
+            expires: DateTime.Now.AddMinutes(int.Parse(jwtSettings["ExpiryMinutes"] ?? "15")),
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
