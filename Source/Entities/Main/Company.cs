@@ -12,4 +12,5 @@ public class Company : BaseEntity
     // Navigation properties
     public virtual ICollection<UserCompany> UserCompanies { get; set; } = new List<UserCompany>();
     public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
+    public virtual ICollection<ApiKey> ApiKeys { get; set; } = new List<ApiKey>();
 }

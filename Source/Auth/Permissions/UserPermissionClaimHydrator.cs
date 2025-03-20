@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using MultiSoftSRB.Auth.ApiKey;
 using MultiSoftSRB.Entities.Main.Enums;
 
 namespace MultiSoftSRB.Auth.Permissions;
@@ -8,6 +9,11 @@ sealed class UserPermissionClaimHydrator(UserProvider userProvider) : IClaimsTra
 {
     public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
     {
+        // Check the authentication type and skip if using API key authentication
+        var authenticationType = principal.Identity?.AuthenticationType;
+        if (authenticationType == ApiKeyAuthenticationHandler.SchemeName)
+            return principal;
+        
         long? userId = null;
         var userIdClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
         if (userIdClaim != null && long.TryParse(userIdClaim.Value, out var uid))
