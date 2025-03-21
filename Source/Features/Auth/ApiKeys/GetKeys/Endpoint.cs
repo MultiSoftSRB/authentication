@@ -5,7 +5,13 @@ using MultiSoftSRB.Database.Main;
 
 namespace MultiSoftSRB.Features.Auth.ApiKeys.GetKeys;
 
-sealed class Endpoint : EndpointWithoutRequest<List<Response>>
+sealed class Request
+{
+    [QueryParam]
+    public long? CompanyId { get; set; }
+}
+
+sealed class Endpoint : Endpoint<Request, List<Response>>
 {
     public MainDbContext MainDbContext { get; set; }
     public CompanyProvider CompanyProvider { get; set; }
@@ -14,13 +20,13 @@ sealed class Endpoint : EndpointWithoutRequest<List<Response>>
     {
         Get("auth/api-keys");
         Permissions(ResourcePermissions.ApiKeyList);
+        Policies(CustomPolicies.SuperAdminOnly);
     }
 
-    public override async Task HandleAsync(CancellationToken cancellationToken)
+    public override async Task HandleAsync(Request request, CancellationToken cancellationToken)
     {
-        var companyId = CompanyProvider.GetCompanyId();
         var apiKeys = await MainDbContext.ApiKeys
-            .Where(k => k.CompanyId == companyId)
+            .Where(k => (request.CompanyId == null || k.CompanyId == request.CompanyId))
             .OrderByDescending(k => k.CreatedAt)
             .Select(k => new Response
             {
