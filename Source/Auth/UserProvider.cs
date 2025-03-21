@@ -68,7 +68,7 @@ public class UserProvider
         return await GetResourcePermissionsAsync(userId, companyId.Value);
     }
     
-    public async Task<string[]> GetPagePermissionsAsync(long userId, long companyId)
+    public async Task<string[]> GetPagePermissionsAsync(long userId, long? companyId)
     {
         // Generate cache key
         var cacheKey = $"{PagePermissionCachePrefix}{userId}_{companyId}";
@@ -87,12 +87,15 @@ public class UserProvider
             options);
     }
     
-    private async Task<string[]> FetchPagePermissionsAsync(long userId, long companyId)
+    private async Task<string[]> FetchPagePermissionsAsync(long userId, long? companyId)
     {
         // SuperAdmin and TenantAdmin have all permissions
         var userType = GetCurrentUserType();
         if (userType is UserType.SuperAdmin or UserType.TenantAdmin)
             return PagePermissions.GetAll().ToArray();
+
+        if (companyId == null)
+            return [];
         
         // Get user roles for the company
         var roleIds = await _mainDbContext.UserRoles
@@ -113,7 +116,7 @@ public class UserProvider
         return permissions;
     }
     
-    public async Task<string[]> GetResourcePermissionsAsync(long userId, long companyId, UserType? userType = null)
+    public async Task<string[]> GetResourcePermissionsAsync(long userId, long? companyId, UserType? userType = null)
     {
         // Generate cache key
         var cacheKey = $"{ResourcePermissionCachePrefix}{userId}_{companyId}";
@@ -132,12 +135,15 @@ public class UserProvider
             options);
     }
     
-    private async Task<string[]> FetchResourcePermissionsAsync(long userId, long companyId, UserType? userType = null)
+    private async Task<string[]> FetchResourcePermissionsAsync(long userId, long? companyId, UserType? userType = null)
     {
         // SuperAdmin and TenantAdmin have all permissions
         userType ??= GetCurrentUserType();
         if (userType is UserType.SuperAdmin or UserType.TenantAdmin)
             return ResourcePermissions.GetAll().ToArray();
+        
+        if (companyId == null)
+            return [];
         
         // Get page permissions first
         var pagePermissions = await GetPagePermissionsAsync(userId, companyId);

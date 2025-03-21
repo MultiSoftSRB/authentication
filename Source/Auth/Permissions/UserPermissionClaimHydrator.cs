@@ -29,10 +29,10 @@ sealed class UserPermissionClaimHydrator(UserProvider userProvider) : IClaimsTra
         if (userTypeClaim != null && Enum.TryParse<UserType>(userTypeClaim.Value, out var ut))
             userType = ut;
         
-        if (userId == null || companyId == null)
+        if (userId == null)
             return principal;
         
-        var currentUserResourcePermissions = await userProvider.GetResourcePermissionsAsync(userId.Value, companyId.Value, userType);
+        var currentUserResourcePermissions = await userProvider.GetResourcePermissionsAsync(userId.Value, companyId, userType);
         if (currentUserResourcePermissions.Length != 0)
         {
             principal.AddIdentity(new(currentUserResourcePermissions.Select(p => new Claim(CustomClaimTypes.ResourcePermission, p))));
