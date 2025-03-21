@@ -10,6 +10,7 @@ sealed class Request
     public string Password { get; set; } = null!;
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
+    public string UserNameWithoutCompanyCode { get; set; } = null!;
         
     // Company info
     public string CompanyName { get; set; } = null!;
@@ -23,7 +24,10 @@ sealed class Request
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email is required")
                 .EmailAddress().WithMessage("Invalid email format");
-            
+
+            RuleFor(x => x.UserNameWithoutCompanyCode)
+                .NotEmpty().WithMessage("Username is required");
+                
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Password is required")
                 .MinimumLength(8).WithMessage("Password must be at least 8 characters long")

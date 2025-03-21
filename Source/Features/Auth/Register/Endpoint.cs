@@ -58,8 +58,8 @@ sealed class Endpoint : Endpoint<Request, Response>
             // Create user
             var user = new User
             {
-                UserName = $"{company.Code}.admin",
-                NormalizedUserName = $"{company.Code}.admin".ToUpper(),
+                UserName = $"{company.Code}.{request.UserNameWithoutCompanyCode}",
+                NormalizedUserName = $"{company.Code}.{request.UserNameWithoutCompanyCode}".ToUpper(),
                 Email = request.Email,
                 NormalizedEmail = request.Email.ToUpper(),
                 FirstName = request.FirstName,
