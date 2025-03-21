@@ -91,7 +91,7 @@ public class UserProvider
     {
         // SuperAdmin and TenantAdmin have all permissions
         var userType = GetCurrentUserType();
-        if (userType is UserType.SuperAdmin or UserType.TenantAdmin)
+        if (userType is not UserType.TenantUser)
             return PagePermissions.GetAll().ToArray();
 
         if (companyId == null)
@@ -139,7 +139,7 @@ public class UserProvider
     {
         // SuperAdmin and TenantAdmin have all permissions
         userType ??= GetCurrentUserType();
-        if (userType is UserType.SuperAdmin or UserType.TenantAdmin)
+        if (userType is not UserType.TenantUser)
             return ResourcePermissions.GetAll().ToArray();
         
         if (companyId == null)
