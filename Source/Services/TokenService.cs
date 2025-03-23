@@ -81,7 +81,7 @@ public class TokenService
         };
 
         // Save to database
-        _mainDbContext.RefreshTokens.Add(token);
+        await _mainDbContext.RefreshTokens.AddAsync(token);
         await _mainDbContext.SaveChangesAsync();
 
         return token;

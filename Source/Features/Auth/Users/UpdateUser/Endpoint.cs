@@ -58,7 +58,7 @@ sealed class Endpoint : Endpoint<Request>
                 RoleId = request.RoleId,
                 CompanyId = companyId
             };
-            MainDbContext.UserRoles.Add(userRole);
+            await MainDbContext.UserRoles.AddAsync(userRole, cancellationToken);
         }
         else if (currentUserRole.RoleId != request.RoleId)
         {
