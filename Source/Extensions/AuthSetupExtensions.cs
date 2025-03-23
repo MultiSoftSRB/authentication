@@ -6,8 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using MultiSoftSRB.Auth;
 using MultiSoftSRB.Auth.ApiKey;
+using MultiSoftSRB.Auth.Permissions;
 using MultiSoftSRB.Entities.Main;
+using MultiSoftSRB.Entities.Main.Enums;
 
 namespace MultiSoftSRB.Extensions;
 
@@ -49,6 +52,20 @@ public static class AuthSetupExtensions
                 .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme, ApiKeyAuthenticationHandler.SchemeName)
                 .RequireAuthenticatedUser()
                 .Build();
+            
+            options.AddPolicy(CustomPolicies.SuperAdminOnly, policy =>
+                policy.RequireClaim(CustomClaimTypes.UserType, UserType.SuperAdmin.ToString()));
+        
+            options.AddPolicy(CustomPolicies.AdminsOnly, policy =>
+                policy.RequireClaim(CustomClaimTypes.UserType, 
+                    UserType.SuperAdmin.ToString(), 
+                    UserType.TenantAdmin.ToString()));
+        
+            options.AddPolicy(CustomPolicies.ConsultantAndAbove, policy =>
+                policy.RequireClaim(CustomClaimTypes.UserType, 
+                    UserType.SuperAdmin.ToString(), 
+                    UserType.TenantAdmin.ToString(),
+                    UserType.Consultant.ToString()));
         });
     }
 }

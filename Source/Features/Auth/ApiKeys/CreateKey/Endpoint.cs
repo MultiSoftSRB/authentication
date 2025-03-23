@@ -17,6 +17,7 @@ sealed class Endpoint : Endpoint<Request, Response>
     {
         Post("auth/api-keys");
         Permissions(ResourcePermissions.ApiKeyCreate);
+        Policies(CustomPolicies.SuperAdminOnly);
     }
 
     public override async Task HandleAsync(Request request, CancellationToken cancellationToken)

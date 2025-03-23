@@ -12,6 +12,7 @@ sealed class Endpoint : EndpointWithoutRequest
     {
         Delete("auth/api-keys/{id}");
         Permissions(ResourcePermissions.ApiKeyDelete);
+        Policies(CustomPolicies.SuperAdminOnly);
     }
 
     public override async Task HandleAsync(CancellationToken cancellationToken)
