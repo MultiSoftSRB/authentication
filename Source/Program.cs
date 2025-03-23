@@ -24,7 +24,8 @@ builder.Services
        .AddTransient<IClaimsTransformation, UserPermissionClaimHydrator>()
        .AddTransient<TokenService>()
        .AddTransient<UserProvider>()
-       .AddTransient<CompanyProvider>();
+       .AddTransient<CompanyProvider>()
+       .AddTransient<RolesService>();
 
 #region DbContext Setup
 

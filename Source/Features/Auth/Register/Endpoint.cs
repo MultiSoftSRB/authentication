@@ -14,6 +14,7 @@ sealed class Endpoint : Endpoint<Request, Response>
     public UserManager<User> UserManager { get; set; }
     public MainDbContext MainDbContext { get; set; }
     public TokenService TokenService { get; set; }
+    public RolesService RolesService { get; set; }
     
     public override void Configure()
     {
@@ -52,7 +53,7 @@ sealed class Endpoint : Endpoint<Request, Response>
                 DatabaseType = request.CompanyType
             };
             
-            MainDbContext.Companies.Add(company);
+            await MainDbContext.Companies.AddAsync(company, cancellationToken);
             await MainDbContext.SaveChangesAsync(cancellationToken);
             
             // Create user
@@ -86,10 +87,12 @@ sealed class Endpoint : Endpoint<Request, Response>
                 IsPrimary = true
             };
             
-            MainDbContext.UserCompanies.Add(userCompany);
+            await MainDbContext.UserCompanies.AddAsync(userCompany, cancellationToken);
             
             // Create default roles
-            var roles = await CreateDefaultRolesAsync(company.Id, cancellationToken);
+            var roles = RolesService.GenerateDefaultRoles(company.Id);
+            await MainDbContext.Roles.AddRangeAsync(roles, cancellationToken);
+            await MainDbContext.SaveChangesAsync(cancellationToken);
             
             // Assign admin role to user
             var adminRole = roles.FirstOrDefault()!;
@@ -100,7 +103,7 @@ sealed class Endpoint : Endpoint<Request, Response>
                 CompanyId = company.Id
             };
             
-            MainDbContext.UserRoles.Add(userRole);
+            await MainDbContext.UserRoles.AddAsync(userRole, cancellationToken);
             await MainDbContext.SaveChangesAsync(cancellationToken);
             
             // Generate tokens
@@ -133,43 +136,5 @@ sealed class Endpoint : Endpoint<Request, Response>
             AddError("An error occurred during registration");
             await SendErrorsAsync(StatusCodes.Status500InternalServerError, cancellationToken);
         }
-    }
-    
-    private async Task<List<Role>> CreateDefaultRolesAsync(long companyId, CancellationToken cancellationToken)
-    {
-        var roles = new List<Role>
-        {
-            new Role
-            {
-                CompanyId = companyId,
-                Name = "Administrator",
-                Description = "Full access to all features",
-                Permissions = PagePermissions
-                              .GetAll()
-                              .Select(rp => new RolePermission { PagePermissionCode = rp })
-                              .ToList()
-            },
-            new Role
-            {
-                CompanyId = companyId,
-                Name = "Accountant",
-                Description = "Access to accounting features",
-                Permissions = new List<RolePermission>
-                {
-                    // Add accounting-related permissions
-                    new RolePermission { PagePermissionCode = PagePermissions.ClientsView },
-                    new RolePermission { PagePermissionCode = PagePermissions.ClientsCreate },
-                    new RolePermission { PagePermissionCode = PagePermissions.ClientsEdit },
-                    new RolePermission { PagePermissionCode = PagePermissions.InvoicesView },
-                    new RolePermission { PagePermissionCode = PagePermissions.InvoicesCreate },
-                    new RolePermission { PagePermissionCode = PagePermissions.InvoicesEdit }
-                }
-            }
-        };
-        
-        await MainDbContext.Roles.AddRangeAsync(roles, cancellationToken);
-        await MainDbContext.SaveChangesAsync(cancellationToken);
-        
-        return roles;
     }
 }
