@@ -7,6 +7,7 @@ using Scalar.AspNetCore;
 using MultiSoftSRB.Auth;
 using MultiSoftSRB.Auth.ApiKey;
 using MultiSoftSRB.Auth.Permissions;
+using MultiSoftSRB.Database.Audit;
 using MultiSoftSRB.Database.Company;
 using MultiSoftSRB.Database.Main;
 using MultiSoftSRB.Entities.Main;
@@ -25,12 +26,21 @@ builder.Services
        .AddTransient<TokenService>()
        .AddTransient<UserProvider>()
        .AddTransient<CompanyProvider>()
+       .AddTransient<ApiKeyProvider>()
        .AddTransient<RolesService>();
 
 #region DbContext Setup
 
-builder.Services.AddDbContext<MainDbContext>(options => 
-    options.UseNpgsql(builder.Configuration.GetConnectionString("MainDatabase")));
+builder.Services.AddScoped<AuditSaveChangesInterceptor>();
+
+builder.Services.AddDbContext<MainDbContext>((serviceProvider, options) =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("MainDatabase"));
+    options.AddInterceptors(serviceProvider.GetRequiredService<AuditSaveChangesInterceptor>());
+});
+
+builder.Services.AddDbContext<AuditDbContext>(options => 
+    options.UseNpgsql(builder.Configuration.GetConnectionString("AuditDatabase")));
 
 builder.Services
        .AddIdentityCore<User>(options =>
@@ -42,7 +52,10 @@ builder.Services
        .AddEntityFrameworkStores<MainDbContext>()
        .AddDefaultTokenProviders();
 
-builder.Services.AddDbContext<CompanyDbContext>();
+builder.Services.AddDbContext<CompanyDbContext>((serviceProvider, options) =>
+{
+    options.AddInterceptors(serviceProvider.GetRequiredService<AuditSaveChangesInterceptor>());
+});
 builder.Services.AddDbContext<CompanyMigrationDbContext>();
 
 builder.Services.Configure<CompanyConnectionStrings>(options =>

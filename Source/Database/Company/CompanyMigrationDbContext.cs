@@ -5,19 +5,6 @@ using MultiSoftSRB.Entities.Company;
 
 namespace MultiSoftSRB.Database.Company;
 
-// public class CompanyMigrationDbContext : IDesignTimeDbContextFactory<CompanyDbContext>
-// {
-//     public CompanyDbContext CreateDbContext(string[] args)
-//     {
-//         var optionsBuilder = new DbContextOptionsBuilder<CompanyDbContext>();
-//
-//         // Provide an empty or default connection string
-//         optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=default_db;Username=postgres;Password=postgres");
-//
-//         return new CompanyDbContext(optionsBuilder.Options);
-//     }
-// }
-
 public class CompanyMigrationDbContext : DbContext
 {
     private readonly CompanyConnectionStrings? _connectionStrings;

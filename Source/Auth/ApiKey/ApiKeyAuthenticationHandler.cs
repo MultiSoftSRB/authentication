@@ -40,6 +40,7 @@ sealed class ApiKeyAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOpt
         // Create claims principal from validation result
         var claims = new List<Claim>
         {
+            new(CustomClaimTypes.ApiKeyId, validationResult.ApiKeyId.ToString()!),
             new(CustomClaimTypes.CompanyId, validationResult.CompanyId.ToString())
         };
         
