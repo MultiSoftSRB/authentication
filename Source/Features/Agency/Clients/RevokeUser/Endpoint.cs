@@ -51,6 +51,8 @@ sealed class Endpoint : Endpoint<Request>
         if (userRoleInCompany != null)
             MainDbContext.UserRoles.Remove(userRoleInCompany);
         
+        await MainDbContext.SaveChangesAsync(cancellationToken);
+        
         await SendOkAsync(cancellationToken);
     }
 }
