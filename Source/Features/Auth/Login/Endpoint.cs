@@ -91,7 +91,8 @@ sealed class Endpoint : Endpoint<Request, Response>
             {
                 Id = user.Id,
                 UserType = user.UserType,
-                FullName = $"{user.FirstName} {user.LastName}",
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Email = user.Email,
                 Username = user.UserName,
                 PagePermissions = company == null ? [] : await UserProvider.GetPagePermissionsAsync(user.Id, company.Id)

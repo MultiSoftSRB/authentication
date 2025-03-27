@@ -25,6 +25,7 @@ sealed class Endpoint : EndpointWithoutRequest<Response>
             LastName = currentUser.LastName,
             Email = currentUser.Email!,
             Username = currentUser.UserName!,
+            UserType = currentUser.UserType,
             PagePermissions = await UserProvider.GetCurrentUserPagePermissionsAsync(),
         }, cancellationToken);
     }
