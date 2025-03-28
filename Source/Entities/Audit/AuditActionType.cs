@@ -1,6 +1,6 @@
 namespace MultiSoftSRB.Entities.Audit;
 
-public enum ActionType
+public enum AuditActionType
 {
     Read,
     Create,

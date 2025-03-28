@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MultiSoftSRB.Audit;
 using Scalar.AspNetCore;
 using MultiSoftSRB.Auth;
 using MultiSoftSRB.Auth.ApiKey;
@@ -39,8 +40,16 @@ builder.Services.AddDbContext<MainDbContext>((serviceProvider, options) =>
     options.AddInterceptors(serviceProvider.GetRequiredService<AuditSaveChangesInterceptor>());
 });
 
-builder.Services.AddDbContext<AuditDbContext>(options => 
-    options.UseNpgsql(builder.Configuration.GetConnectionString("AuditDatabase")));
+// Register the audit db contexts and options for excluding entities and properties from audit
+builder.Services.AddDbContext<MainAuditDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("MainAuditDatabase")));
+builder.Services.AddDbContext<CompanyAuditDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("CompanyAuditDatabase")));
+builder.Services.AddSingleton<AuditOptions>();
+        
+builder.Services.AddSingleton<AuditOptions>(_ => {
+    var options = new AuditOptions();
+    AuditExclusionConfiguration.ConfigureExclusions(options);
+    return options;
+});
 
 builder.Services
        .AddIdentityCore<User>(options =>
@@ -52,10 +61,7 @@ builder.Services
        .AddEntityFrameworkStores<MainDbContext>()
        .AddDefaultTokenProviders();
 
-builder.Services.AddDbContext<CompanyDbContext>((serviceProvider, options) =>
-{
-    options.AddInterceptors(serviceProvider.GetRequiredService<AuditSaveChangesInterceptor>());
-});
+builder.Services.AddDbContext<CompanyDbContext>();
 builder.Services.AddDbContext<CompanyMigrationDbContext>();
 
 builder.Services.Configure<CompanyConnectionStrings>(options =>

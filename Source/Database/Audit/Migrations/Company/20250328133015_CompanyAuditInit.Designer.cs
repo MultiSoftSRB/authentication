@@ -9,11 +9,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MultiSoftSRB.Database.Audit.Migrations
+namespace MultiSoftSRB.Database.Audit.Migrations.Company
 {
-    [DbContext(typeof(AuditDbContext))]
-    [Migration("20250323235753_AuditLogInit")]
-    partial class AuditLogInit
+    [DbContext(typeof(CompanyAuditDbContext))]
+    [Migration("20250328133015_CompanyAuditInit")]
+    partial class CompanyAuditInit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,13 +25,16 @@ namespace MultiSoftSRB.Database.Audit.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.HasSequence("AuditLogSequence");
+
             modelBuilder.Entity("MultiSoftSRB.Entities.Audit.AuditLog", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("nextval('\"AuditLogSequence\"')");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSequence(b.Property<long>("Id"));
 
                     b.Property<int>("ActionType")
                         .HasColumnType("integer");
@@ -46,11 +49,6 @@ namespace MultiSoftSRB.Database.Audit.Migrations
                     b.Property<long?>("CompanyId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("ContextType")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
                     b.Property<string>("Endpoint")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -60,24 +58,6 @@ namespace MultiSoftSRB.Database.Audit.Migrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
-
-                    b.Property<string>("EntityName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
-                    b.Property<bool>("IsApiKeyAuth")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("NewValues")
-                        .IsRequired()
-                        .HasColumnType("jsonb");
-
-                    b.Property<string>("OldValues")
-                        .IsRequired()
-                        .HasColumnType("jsonb");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp with time zone");
@@ -93,9 +73,23 @@ namespace MultiSoftSRB.Database.Audit.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.HasIndex("EntityName");
+                    b.ToTable((string)null);
 
-                    b.ToTable("AuditLogs");
+                    b.UseTpcMappingStrategy();
+                });
+
+            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.ArticleAuditLog", b =>
+                {
+                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
+
+                    b.ToTable("ArticleAuditLogs");
+                });
+
+            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.DefaultAuditLog", b =>
+                {
+                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
+
+                    b.ToTable("DefaultAuditLogs");
                 });
 #pragma warning restore 612, 618
         }

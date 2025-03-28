@@ -11,10 +11,6 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
     {
         builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.EntityName)
-            .IsRequired()
-            .HasMaxLength(128);
-
         builder.Property(e => e.ActionType)
             .IsRequired();
 
@@ -28,9 +24,6 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
 
         builder.Property(e => e.UserName)
             .HasMaxLength(256);
-
-        builder.Property(e => e.IsApiKeyAuth)
-            .HasDefaultValue(false);
             
         builder.Property(e => e.EntityId)
             .IsRequired()
@@ -39,20 +32,10 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
         builder.Property(e => e.Endpoint)
             .HasMaxLength(256);
 
-        builder.Property(e => e.OldValues)
-            .HasColumnType("jsonb");
-
-        builder.Property(e => e.NewValues)
-            .HasColumnType("jsonb");
-
         builder.Property(e => e.ChangedProperties)
             .HasColumnType("jsonb");
-
-        builder.Property(e => e.ContextType)
-            .HasMaxLength(128);
-
+        
         // Indexes
-        builder.HasIndex(e => e.EntityName);
         builder.HasIndex(e => e.CompanyId);
     }
 }

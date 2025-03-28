@@ -33,10 +33,15 @@ public static class MigrationExtensions
             dbContext.Database.Migrate();
         }
         
-        // Apply migrations for AuditDbContext
-        var auditDbContext = services.GetRequiredService<AuditDbContext>();
-        Console.WriteLine("Applying migrations for AuditDbContext...");
-        auditDbContext.Database.Migrate();
+        // Apply migrations for MainAuditDbContext
+        var mainAuditDbContext = services.GetRequiredService<MainAuditDbContext>();
+        Console.WriteLine("Applying migrations for MainAuditDbContext...");
+        mainAuditDbContext.Database.Migrate();
+        
+        // Apply migrations for CompanyAuditDbContext
+        var companyAuditDbContext = services.GetRequiredService<CompanyAuditDbContext>();
+        Console.WriteLine("Applying migrations for CompanyAuditDbContext...");
+        companyAuditDbContext.Database.Migrate();
 
         Console.WriteLine("All migrations applied successfully.");
     }
