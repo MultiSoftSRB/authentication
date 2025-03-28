@@ -159,6 +159,10 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
         var changes = new List<PropertyChange>();
         var entityType = entry.Entity.GetType();
 
+        // If it's deleted, we don't need to track any fields, entity no longer exists
+        if (entry.State == EntityState.Deleted)
+            return changes;
+        
         foreach (var property in entry.Properties)
         {
             // Skip if property is excluded from auditing
@@ -173,16 +177,6 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
                     PropertyName = property.Metadata.Name,
                     OldValue = null,
                     NewValue = property.CurrentValue
-                });
-            }
-            // For deleted entities, log all non-null properties
-            else if (entry.State == EntityState.Deleted && property.OriginalValue != null)
-            {
-                changes.Add(new PropertyChange
-                {
-                    PropertyName = property.Metadata.Name,
-                    OldValue = property.OriginalValue,
-                    NewValue = null
                 });
             }
             // For modified entities, only log changed properties
