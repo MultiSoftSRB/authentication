@@ -36,6 +36,7 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
             .HasColumnType("jsonb");
         
         // Indexes
+        builder.HasIndex(e => e.EntityId);
         builder.HasIndex(e => e.CompanyId);
     }
 }

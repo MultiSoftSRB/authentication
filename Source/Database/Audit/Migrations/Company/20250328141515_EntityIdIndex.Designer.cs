@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MultiSoftSRB.Database.Audit;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MultiSoftSRB.Database.Audit.Migrations.Main
+namespace MultiSoftSRB.Database.Audit.Migrations.Company
 {
-    [DbContext(typeof(MainAuditDbContext))]
-    partial class MainAuditDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(CompanyAuditDbContext))]
+    [Migration("20250328141515_EntityIdIndex")]
+    partial class EntityIdIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,32 +80,11 @@ namespace MultiSoftSRB.Database.Audit.Migrations.Main
                     b.UseTpcMappingStrategy();
                 });
 
-            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.AgencyClientAuditLog", b =>
+            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.ArticleAuditLog", b =>
                 {
                     b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
 
-                    b.ToTable("AgencyClients");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.ApiKeyAuditLog", b =>
-                {
-                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
-
-                    b.ToTable("ApiKeys");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.ApiKeyPermissionAuditLog", b =>
-                {
-                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
-
-                    b.ToTable("ApiKeyPermissions");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.CompanyAuditLog", b =>
-                {
-                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
-
-                    b.ToTable("Companies");
+                    b.ToTable("ArticleAuditLogs");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Audit.DefaultAuditLog", b =>
@@ -110,41 +92,6 @@ namespace MultiSoftSRB.Database.Audit.Migrations.Main
                     b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
 
                     b.ToTable("DefaultAuditLogs");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.RoleAuditLog", b =>
-                {
-                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
-
-                    b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.RolePermissionAuditLog", b =>
-                {
-                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
-
-                    b.ToTable("RolePermissions");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.UserAuditLog", b =>
-                {
-                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.UserCompanyAuditLog", b =>
-                {
-                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
-
-                    b.ToTable("UserCompanies");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.UserRoleAuditLog", b =>
-                {
-                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
-
-                    b.ToTable("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

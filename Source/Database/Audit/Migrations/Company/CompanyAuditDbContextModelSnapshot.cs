@@ -70,6 +70,8 @@ namespace MultiSoftSRB.Database.Audit.Migrations.Company
 
                     b.HasIndex("CompanyId");
 
+                    b.HasIndex("EntityId");
+
                     b.ToTable((string)null);
 
                     b.UseTpcMappingStrategy();
