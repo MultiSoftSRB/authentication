@@ -41,8 +41,16 @@ builder.Services.AddDbContext<MainDbContext>((serviceProvider, options) =>
 });
 
 // Register the audit db contexts and options for excluding entities and properties from audit
-builder.Services.AddDbContext<MainAuditDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("MainAuditDatabase")));
-builder.Services.AddDbContext<CompanyAuditDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("CompanyAuditDatabase")));
+builder.Services.AddDbContext<MainAuditDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("MainAuditDatabase"));
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+});
+builder.Services.AddDbContext<CompanyAuditDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("CompanyAuditDatabase"));
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+});
 builder.Services.AddSingleton<AuditOptions>();
         
 builder.Services.AddSingleton<AuditOptions>(_ => {
