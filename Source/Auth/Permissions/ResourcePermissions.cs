@@ -4,6 +4,9 @@ namespace MultiSoftSRB.Auth.Permissions;
 
 public static class ResourcePermissions
 {
+    // Audit
+    public const string AuditRead = "audit.read";
+    
     // Company management
     public const string CompanyList = "company.list";
     public const string CompanyRead = "company.read";

@@ -34,6 +34,12 @@ public class UserProvider
         return default;
     }
     
+    public long? GetCurrentUserIdNullable()
+    {
+        var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
+        return userIdClaim != null && long.TryParse(userIdClaim.Value, out var userId) ? userId : null;
+    }
+    
     public long? GetCurrentCompanyId()
     {
         var claim = _httpContextAccessor.HttpContext?.User?.FindFirst(CustomClaimTypes.CompanyId);
@@ -44,6 +50,12 @@ public class UserProvider
     {
         var claim = _httpContextAccessor.HttpContext?.User?.FindFirst(CustomClaimTypes.UserType);
         return claim != null && Enum.TryParse<UserType>(claim.Value, out var userType) ? userType : null;
+    }
+    
+    public string? GetCurrentUserName()
+    {
+        var claim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name);
+        return claim?.Value;
     }
     
     public async Task<string[]> GetCurrentUserPagePermissionsAsync()

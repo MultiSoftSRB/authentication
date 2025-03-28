@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MultiSoftSRB.Audit;
 using Scalar.AspNetCore;
 using MultiSoftSRB.Auth;
 using MultiSoftSRB.Auth.ApiKey;
 using MultiSoftSRB.Auth.Permissions;
+using MultiSoftSRB.Database.Audit;
 using MultiSoftSRB.Database.Company;
 using MultiSoftSRB.Database.Main;
 using MultiSoftSRB.Entities.Main;
@@ -25,12 +27,37 @@ builder.Services
        .AddTransient<TokenService>()
        .AddTransient<UserProvider>()
        .AddTransient<CompanyProvider>()
+       .AddTransient<ApiKeyProvider>()
        .AddTransient<RolesService>();
 
 #region DbContext Setup
 
-builder.Services.AddDbContext<MainDbContext>(options => 
-    options.UseNpgsql(builder.Configuration.GetConnectionString("MainDatabase")));
+builder.Services.AddScoped<AuditSaveChangesInterceptor>();
+
+builder.Services.AddDbContext<MainDbContext>((serviceProvider, options) =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("MainDatabase"));
+    options.AddInterceptors(serviceProvider.GetRequiredService<AuditSaveChangesInterceptor>());
+});
+
+// Register the audit db contexts and options for excluding entities and properties from audit
+builder.Services.AddDbContext<MainAuditDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("MainAuditDatabase"));
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+});
+builder.Services.AddDbContext<CompanyAuditDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("CompanyAuditDatabase"));
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+});
+builder.Services.AddSingleton<AuditOptions>();
+        
+builder.Services.AddSingleton<AuditOptions>(_ => {
+    var options = new AuditOptions();
+    AuditExclusionConfiguration.ConfigureExclusions(options);
+    return options;
+});
 
 builder.Services
        .AddIdentityCore<User>(options =>

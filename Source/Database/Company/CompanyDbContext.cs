@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MultiSoftSRB.Audit;
 using MultiSoftSRB.Auth;
 using MultiSoftSRB.Entities.Company;
 
@@ -8,11 +9,17 @@ namespace MultiSoftSRB.Database.Company;
 
 public class CompanyDbContext : DbContext
 {
+    private readonly IServiceProvider _serviceProvider;
     private readonly CompanyProvider _companyProvider;
     private readonly long _companyId;
 
-    public CompanyDbContext(DbContextOptions<CompanyDbContext> options, CompanyProvider companyProvider) : base(options)
+    public CompanyDbContext(
+        DbContextOptions<CompanyDbContext> options,
+        IServiceProvider serviceProvider,
+        CompanyProvider companyProvider) 
+        : base(options)
     {
+        _serviceProvider = serviceProvider;
         _companyProvider = companyProvider;
         _companyId = companyProvider.GetCompanyId();
     }
@@ -22,6 +29,9 @@ public class CompanyDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(_companyProvider.GetConnectionString());
+        
+        // Add audit interceptor
+        optionsBuilder.AddInterceptors(_serviceProvider.GetRequiredService<AuditSaveChangesInterceptor>());
     }
     
     protected override void OnModelCreating(ModelBuilder builder)
