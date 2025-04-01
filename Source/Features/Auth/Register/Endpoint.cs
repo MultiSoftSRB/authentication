@@ -1,7 +1,6 @@
 using System.Transactions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MultiSoftSRB.Auth.Permissions;
 using MultiSoftSRB.Database.Main;
 using MultiSoftSRB.Entities.Main;
 using MultiSoftSRB.Entities.Main.Enums;
@@ -107,19 +106,21 @@ sealed class Endpoint : Endpoint<Request, Response>
             await MainDbContext.SaveChangesAsync(cancellationToken);
             
             // Generate tokens
-            var accessToken = TokenService.GenerateAccessToken(user, company);
-            var refreshToken = await TokenService.GenerateRefreshTokenAsync(user.Id, company.Id);
+            var tokens = await TokenService.GenerateTokensAsync(user, company);
 
+            // After we generate tokens, double check if there are any errors and return immediatelly to prevent problems
+            ThrowIfAnyErrors();
+            
             // Set refresh token as a HTTP-only cookie
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Expires = refreshToken.ExpiresAt,
+                Expires = tokens.RefreshToken.ExpiresAt,
                 Secure = HttpContext.Request.IsHttps,
                 SameSite = SameSiteMode.Strict,
             };
     
-            HttpContext.Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
+            HttpContext.Response.Cookies.Append("refreshToken", tokens.RefreshToken.Token, cookieOptions);
             
             // After all the changes, now we commit the transaction
             transaction.Complete();
@@ -128,7 +129,7 @@ sealed class Endpoint : Endpoint<Request, Response>
             {
                 UserId = user.Id,
                 CompanyId = company.Id,
-                AccessToken = accessToken,
+                AccessToken = tokens.AccessToken,
             }, cancellation: cancellationToken);
         }
         catch (Exception)

@@ -10,5 +10,6 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Entities.Main.Compa
     {
         builder.Property(e => e.Name).HasMaxLength(256);
         builder.Property(e => e.Code).HasMaxLength(20);
+        builder.Property(e => e.LicenseCount).HasDefaultValue(1);
     }
 }

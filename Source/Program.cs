@@ -7,6 +7,7 @@ using MultiSoftSRB.Audit;
 using Scalar.AspNetCore;
 using MultiSoftSRB.Auth;
 using MultiSoftSRB.Auth.ApiKey;
+using MultiSoftSRB.Auth.Licensing;
 using MultiSoftSRB.Auth.Permissions;
 using MultiSoftSRB.Database.Audit;
 using MultiSoftSRB.Database.Company;
@@ -28,6 +29,7 @@ builder.Services
        .AddTransient<UserProvider>()
        .AddTransient<CompanyProvider>()
        .AddTransient<ApiKeyProvider>()
+       .AddTransient<LicenseProvider>()
        .AddTransient<RolesService>();
 
 #region DbContext Setup
@@ -129,6 +131,7 @@ if (!app.Environment.IsDevelopment())
 app.UseCors("AllowReact");
 app.UseAuthentication()
    .UseAuthorization()
+   .UseMiddleware<SessionValidationMiddleware>()
    .UseDefaultExceptionHandler(null, app.Environment.IsProduction(), app.Environment.IsProduction())
    .UseFastEndpoints(
        c =>

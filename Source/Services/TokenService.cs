@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MultiSoftSRB.Auth;
+using MultiSoftSRB.Auth.Licensing;
 using MultiSoftSRB.Database.Main;
 using MultiSoftSRB.Entities.Main;
 
@@ -14,16 +15,41 @@ public class TokenService
 {
     private readonly IConfiguration _configuration;
     private readonly MainDbContext _mainDbContext;
-    private readonly UserProvider _userProvider;
+    private readonly LicenseProvider _licenseProvider;
 
-    public TokenService(IConfiguration configuration, MainDbContext mainDbContext, UserProvider userProvider)
+    public TokenService(IConfiguration configuration, MainDbContext mainDbContext, LicenseProvider licenseProvider)
     {
         _configuration = configuration;
         _mainDbContext = mainDbContext;
-        _userProvider = userProvider;
+        _licenseProvider = licenseProvider;
     }
 
-    public string GenerateAccessToken(User user, Company? company)
+    public async Task<(string AccessToken, RefreshToken RefreshToken)> GenerateTokensAsync(User user, Company? company = null)
+    {
+        // Try to acquire a license and create a session
+        var sessionId = string.Empty;
+        if (company != null)
+        {
+            var acquisitionResponse = await _licenseProvider.TryAcquireLicenseAndCreateSessionAsync(user.Id, company.Id);
+            if (!acquisitionResponse.Success)
+            {
+                ValidationContext.Instance.ThrowError("No available licenses.", StatusCodes.Status400BadRequest);
+                return default;
+            }
+            
+            sessionId = acquisitionResponse.SessionId;
+        }
+
+        // Generate access token with session ID
+        var accessToken = GenerateAccessToken(user, company, sessionId);
+        
+        // Generate refresh token
+        var refreshToken = await GenerateRefreshTokenAsync(user.Id, company?.Id);
+
+        return (accessToken, refreshToken);
+    }
+    
+    public string GenerateAccessToken(User user, Company? company, string sessionId)
     {
         var claims = new List<Claim>
         {
@@ -38,8 +64,10 @@ public class TokenService
         if (company != null)
         {
             claims.Add(
+                new Claim(CustomClaimTypes.SessionId, sessionId),
                 new Claim(CustomClaimTypes.CompanyId, company.Id.ToString()),
-                new Claim(CustomClaimTypes.DatabaseType, ((int)company.DatabaseType).ToString()));
+                new Claim(CustomClaimTypes.DatabaseType, ((int)company.DatabaseType).ToString())
+            );
         }
 
         // Get the JWT settings from configuration
@@ -96,7 +124,7 @@ public class TokenService
             return default;
         }
 
-        var currentUser = await _mainDbContext.Users.FindAsync(refreshToken.UserId);
+        var currentUser = (await _mainDbContext.Users.FindAsync(refreshToken.UserId))!;
 
         // Check if company exists
         Company? company = null;
@@ -113,12 +141,19 @@ public class TokenService
                 return default;
             }
             
-            currentUser!.LastUsedCompanyId = company.Id;
+            currentUser.LastUsedCompanyId = company.Id;
             await _mainDbContext.SaveChangesAsync();
         }
         
+        var sessionId = await _licenseProvider.GetCurrentSessionIdAsync(currentUser.Id);
+        if (string.IsNullOrEmpty(sessionId))
+        {
+            ValidationContext.Instance.ThrowError("Invalid session", StatusCodes.Status400BadRequest);
+            return default;
+        }
+        
         // Generate new tokens
-        var newAccessToken = GenerateAccessToken(currentUser!, company);
+        var newAccessToken = GenerateAccessToken(currentUser!, company, sessionId);
         var newRefreshToken = await GenerateRefreshTokenAsync(currentUser!.Id, company?.Id);
 
         refreshToken.UsedAt = DateTime.UtcNow;
@@ -147,7 +182,7 @@ public class TokenService
     public async Task RevokeAllUserTokensAsync(long userId)
     {
         var activeTokens = await _mainDbContext.RefreshTokens
-            .Where(t => t.UserId == userId && t.IsActive)
+            .Where(t => t.UserId == userId && !t.IsRevoked && DateTime.UtcNow < t.ExpiresAt)
             .ToListAsync();
 
         foreach (var token in activeTokens)

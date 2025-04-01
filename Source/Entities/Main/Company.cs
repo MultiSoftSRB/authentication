@@ -8,6 +8,7 @@ public class Company : BaseEntity
     public string Code { get; set; } = null!;
     public DateTime CreatedAt { get; set; }
     public DatabaseType DatabaseType { get; set; }
+    public short LicenseCount { get; set; } = 1;
         
     // Navigation properties
     public virtual ICollection<UserCompany> UserCompanies { get; set; } = new List<UserCompany>();

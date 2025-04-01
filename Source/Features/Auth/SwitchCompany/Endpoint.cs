@@ -45,24 +45,26 @@ sealed class Endpoint : Endpoint<Request, Response>
         await MainDbContext.SaveChangesAsync(cancellationToken);
         
         // Generate new JWT token with new company context
-        var accessToken = TokenService.GenerateAccessToken(user, company);
-        var refreshToken = await TokenService.GenerateRefreshTokenAsync(user.Id, company.Id);
+        var tokens = await TokenService.GenerateTokensAsync(user, company);
+        
+        // After we generate tokens, double check if there are any errors and return immediatelly to prevent problems
+        ThrowIfAnyErrors();
 
         // Set refresh token as a HTTP-only cookie
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Expires = refreshToken.ExpiresAt,
+            Expires = tokens.RefreshToken.ExpiresAt,
             Secure = HttpContext.Request.IsHttps,
             SameSite = SameSiteMode.Strict,
         };
     
-        HttpContext.Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
+        HttpContext.Response.Cookies.Append("refreshToken", tokens.RefreshToken.Token, cookieOptions);
         
         // Return response
         await SendOkAsync(new Response
         {
-            AccessToken = accessToken
+            AccessToken = tokens.AccessToken
         }, cancellation: cancellationToken);
     }
 }
