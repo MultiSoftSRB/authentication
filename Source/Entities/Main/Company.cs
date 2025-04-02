@@ -6,7 +6,7 @@ public class Company : BaseEntity
 {
     public string Name { get; set; } = null!;
     public string Code { get; set; } = null!;
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DatabaseType DatabaseType { get; set; }
         
     // Navigation properties

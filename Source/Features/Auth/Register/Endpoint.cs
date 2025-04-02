@@ -1,7 +1,5 @@
-using System.Transactions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MultiSoftSRB.Auth.Permissions;
 using MultiSoftSRB.Database.Main;
 using MultiSoftSRB.Entities.Main;
 using MultiSoftSRB.Entities.Main.Enums;
@@ -42,7 +40,7 @@ sealed class Endpoint : Endpoint<Request, Response>
             return;
         }
         
-        using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        await using var transaction = await MainDbContext.Database.BeginTransactionAsync(cancellationToken);
         try
         {
             // Create company
@@ -122,7 +120,7 @@ sealed class Endpoint : Endpoint<Request, Response>
             HttpContext.Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
             
             // After all the changes, now we commit the transaction
-            transaction.Complete();
+            await transaction.CommitAsync(cancellationToken);
             
             await SendOkAsync(new Response
             {
@@ -133,6 +131,7 @@ sealed class Endpoint : Endpoint<Request, Response>
         }
         catch (Exception)
         {
+            await transaction.RollbackAsync(cancellationToken);
             AddError("An error occurred during registration");
             await SendErrorsAsync(StatusCodes.Status500InternalServerError, cancellationToken);
         }
