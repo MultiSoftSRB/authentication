@@ -36,8 +36,7 @@ sealed class Endpoint : Endpoint<Request, Response>
             return;
         }
         
-        using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-        try
+        await using var transaction = await MainDbContext.Database.BeginTransactionAsync(cancellationToken);        try
         {
             // Create company
             var clientCompany = new Company
@@ -87,7 +86,7 @@ sealed class Endpoint : Endpoint<Request, Response>
             await MainDbContext.SaveChangesAsync(cancellationToken);
             
             // After all the changes, now we commit the transaction
-            transaction.Complete();
+            await transaction.CommitAsync(cancellationToken);
             
             await SendOkAsync(new Response
             {
@@ -96,6 +95,7 @@ sealed class Endpoint : Endpoint<Request, Response>
         }
         catch (Exception)
         {
+            await transaction.RollbackAsync(cancellationToken);
             AddError("An error occurred during registration");
             await SendErrorsAsync(StatusCodes.Status500InternalServerError, cancellationToken);
         }
