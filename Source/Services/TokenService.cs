@@ -27,7 +27,7 @@ public class TokenService
     public async Task<(string AccessToken, RefreshToken RefreshToken)> GenerateTokensAsync(User user, Company? company = null)
     {
         // Try to acquire a license and create a session
-        var sessionId = string.Empty;
+        string sessionId;
         if (company != null)
         {
             var acquisitionResponse = await _licenseProvider.TryAcquireLicenseAndCreateSessionAsync(user.Id, company.Id);
@@ -38,6 +38,10 @@ public class TokenService
             }
             
             sessionId = acquisitionResponse.SessionId;
+        }
+        else
+        {
+            sessionId = await _licenseProvider.CreateSessionAsync(user.Id);
         }
 
         // Generate access token with session ID
@@ -53,6 +57,7 @@ public class TokenService
     {
         var claims = new List<Claim>
         {
+            new Claim(CustomClaimTypes.SessionId, sessionId),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.UserName!),
             new Claim(ClaimTypes.Email, user.Email!),
@@ -64,7 +69,6 @@ public class TokenService
         if (company != null)
         {
             claims.Add(
-                new Claim(CustomClaimTypes.SessionId, sessionId),
                 new Claim(CustomClaimTypes.CompanyId, company.Id.ToString()),
                 new Claim(CustomClaimTypes.DatabaseType, ((int)company.DatabaseType).ToString())
             );

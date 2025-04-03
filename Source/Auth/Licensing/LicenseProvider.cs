@@ -60,11 +60,27 @@ public class LicenseProvider
         
         return new() { Success = true, SessionId = sessionId };
     }
+    
+    /// <summary>
+    /// Create new session for the user, without the license. Handy in cases where user is accessing the app without company (ie. Superadmin).
+    /// </summary>
+    public async Task<string> CreateSessionAsync(long userId)
+    {
+        var sessionId = GenerateSessionId();
+        
+        // Remove previous session if exists
+        await RemovePreviousUserSessionAsync(userId);
+
+        // Store the new session with a null company ID
+        await StoreSessionAsync(userId, null, sessionId);
+        
+        return sessionId;
+    }
 
     /// <summary>
     /// Validates if a session is still active and updates its last activity timestamp
     /// </summary>
-    public async Task<bool> ValidateAndRefreshSessionAsync(long userId, long companyId, string sessionId)
+    public async Task<bool> ValidateAndRefreshSessionAsync(long userId, long? companyId, string sessionId)
     {
         var cacheKey = $"{UserSessionKeyPrefix}{userId}";
 
@@ -90,7 +106,7 @@ public class LicenseProvider
     /// <summary>
     /// Explicitly releases a license when a user logs out
     /// </summary>
-    public async Task ReleaseLicenseAsync(long userId, long companyId, string sessionId)
+    public async Task ReleaseLicenseAsync(long userId, long? companyId, string sessionId)
     {
         var cacheKey = $"{UserSessionKeyPrefix}{userId}";
         var session = await _cache.GetOrDefaultAsync<UserSessionInfo>(cacheKey);
@@ -101,8 +117,9 @@ public class LicenseProvider
             // Remove the session
             await _cache.RemoveAsync(cacheKey);
             
-            // Increment available license count
-            await IncrementAvailableLicensesAsync(companyId);
+            // Increment available license count only if company is specified
+            if (companyId.HasValue)
+                await IncrementAvailableLicensesAsync(companyId.Value);
         }
     }
 
@@ -114,20 +131,18 @@ public class LicenseProvider
         var cacheKey = $"{UserSessionKeyPrefix}{userId}";
         var existingSession = await _cache.GetOrDefaultAsync<UserSessionInfo>(cacheKey);
         
-        if (existingSession != null)
-        {
-            // Increment available licenses for the previous company
-            await IncrementAvailableLicensesAsync(existingSession.CompanyId);
-            
-            // Remove the existing session
-            await _cache.RemoveAsync(cacheKey);
-        }
+        // Increment available licenses for the previous company
+        if (existingSession != null && existingSession.CompanyId.HasValue)
+            await IncrementAvailableLicensesAsync(existingSession.CompanyId.Value);
+        
+        // Remove the existing session
+        await _cache.RemoveAsync(cacheKey);
     }
 
     /// <summary>
     /// Stores a new user session
     /// </summary>
-    private async Task StoreSessionAsync(long userId, long companyId, string sessionId)
+    private async Task StoreSessionAsync(long userId, long? companyId, string sessionId)
     {
         var cacheKey = $"{UserSessionKeyPrefix}{userId}";
         var session = new UserSessionInfo
