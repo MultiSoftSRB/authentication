@@ -1,22 +1,19 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using MultiSoftSRB.Database.Main;
 using MultiSoftSRB.Entities.Main;
 using MultiSoftSRB.Entities.Main.Enums;
 using MultiSoftSRB.Services;
 
-namespace MultiSoftSRB.Features.Auth.Login;
+namespace MultiSoftSRB.Features.Auth.LoginSuperadmin;
 
 sealed class Endpoint : Endpoint<Request, Response>
 {
     public UserManager<User> UserManager { get; set; }
     public SignInManager<User> SignInManager { get; set; }
-    public MainDbContext MainDbContext { get; set; }
     public TokenService TokenService { get; set; }
     
     public override void Configure()
     {
-        Post("auth/login");
+        Post("auth/login-superadmin");
         AllowAnonymous();
     }
 
@@ -39,20 +36,18 @@ sealed class Endpoint : Endpoint<Request, Response>
             await SendErrorsAsync(StatusCodes.Status401Unauthorized, cancellationToken);
             return;
         }
+
+        if (user.UserType != UserType.SuperAdmin)
+        {
+            AddError("Only Super Admin users can login via this endpoint");
+            await SendErrorsAsync(StatusCodes.Status403Forbidden, cancellationToken);
+            return;
+        }
         
         // Update last login time
         user.LastLoginTime = DateTime.Now;
         await UserManager.UpdateAsync(user);
         
-        var userCompanies = await MainDbContext.UserCompanies
-            .Where(uc => uc.UserId == user.Id)
-            .Select(uc => new Response.Company
-            {
-                Id = uc.Company.Id,
-                Name = uc.Company.Name
-            })
-            .ToListAsync(cancellationToken);
-
         // Generate tokens
         var tokens = await TokenService.GenerateTokensAsync(user);
         
@@ -73,11 +68,9 @@ sealed class Endpoint : Endpoint<Request, Response>
         var response = new Response
         {
             AccessToken = tokens.AccessToken,
-            Companies = userCompanies,
             UserDetails = new()
             {
                 Id = user.Id,
-                UserType = user.UserType,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,

@@ -58,15 +58,9 @@ public class SessionValidationMiddleware
         // Extract user ID and company ID - using our existing UserProvider
         var userId = userProvider.GetCurrentUserId();
         var companyId = userProvider.GetCurrentCompanyId();
-        
-        if (companyId == null)
-        {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            return;
-        }
 
         // Validate session is still active
-        var isSessionValid = await licenseProvider.ValidateAndRefreshSessionAsync(userId, companyId.Value, sessionId);
+        var isSessionValid = await licenseProvider.ValidateAndRefreshSessionAsync(userId, companyId, sessionId);
         if (!isSessionValid)
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;

@@ -62,9 +62,12 @@ sealed class Endpoint : Endpoint<Request, Response>
         HttpContext.Response.Cookies.Append("refreshToken", tokens.RefreshToken.Token, cookieOptions);
         
         // Return response
-        await SendOkAsync(new Response
+        var response = new Response
         {
-            AccessToken = tokens.AccessToken
-        }, cancellation: cancellationToken);
+            AccessToken = tokens.AccessToken,
+            PagePermissions = await UserProvider.GetPagePermissionsAsync(user.Id, company.Id)
+        };
+        
+        await SendOkAsync(response, cancellationToken);
     }
 }
