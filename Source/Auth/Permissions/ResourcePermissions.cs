@@ -59,6 +59,13 @@ public static class ResourcePermissions
     public const string ApiKeyUpdate = "apikey.update";
     public const string ApiKeyDelete = "apikey.delete";
     
+    // License management
+    public const string LicenseList = "license.list";
+    public const string LicenseRead = "license.read";
+    public const string LicenseCreate = "license.create";
+    public const string LicenseUpdate = "license.update";
+    public const string LicenseDelete = "license.delete";
+    
     // Helper method to get all permissions
     public static IEnumerable<string> GetAll()
     {

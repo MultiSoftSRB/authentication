@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MultiSoftSRB.Auth.Permissions;
+using MultiSoftSRB.Database.Main;
 using MultiSoftSRB.Entities.Main;
 using MultiSoftSRB.Entities.Main.Enums;
 
@@ -8,18 +11,38 @@ public class DataSeeder
 {
     private readonly UserManager<User> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly MainDbContext _mainDbContext;
     
-    public DataSeeder(UserManager<User> userManager, IConfiguration configuration)
+    public DataSeeder(UserManager<User> userManager, IConfiguration configuration, MainDbContext mainDbContext)
     {
         _userManager = userManager;
         _configuration = configuration;
+        _mainDbContext = mainDbContext;
     }
     
     public async Task SeedAllAsync()
     {
         await SeedSuperAdminAsync();
+        await SeedDefaultLicense();
     }
-    
+
+    private async Task SeedDefaultLicense()
+    {
+        if (!await _mainDbContext.Licenses.AnyAsync())
+        {
+            await _mainDbContext.AddAsync(new License
+            {
+                Name = "Default License",
+                Description = "Default License",
+                Features = FeaturePermissions.GetAll().Select(x => new LicenseFeature
+                {
+                    FeaturePermissionCode = x
+                }).ToList()
+            });
+            await _mainDbContext.SaveChangesAsync();
+        }
+    }
+
     private async Task SeedSuperAdminAsync()
     {
         // Check if admin user already exists
