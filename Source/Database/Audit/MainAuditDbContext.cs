@@ -15,6 +15,7 @@ public class MainAuditDbContext : BaseAuditDbContext
     public DbSet<ApiKeyAuditLog> ApiKeys { get; set; }
     public DbSet<ApiKeyPermissionAuditLog> ApiKeyPermissions { get; set; }
     public DbSet<AgencyClientAuditLog> AgencyClients { get; set; }
-
+    public DbSet<RegistrationRequestAuditLog> RegistrationRequests { get; set; }
+    
     public MainAuditDbContext(DbContextOptions<MainAuditDbContext> options) : base(options) {}
 }

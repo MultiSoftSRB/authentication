@@ -25,6 +25,7 @@ public class UserRoleAuditLog : AuditLog { }
 public class ApiKeyAuditLog : AuditLog { }
 public class ApiKeyPermissionAuditLog : AuditLog { }
 public class AgencyClientAuditLog : AuditLog { }
+public class RegistrationRequestAuditLog : AuditLog { }
 
 
 // Empty derived classes just for table separation from Company entities
