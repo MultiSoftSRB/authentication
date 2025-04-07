@@ -37,7 +37,7 @@ sealed class Endpoint : Endpoint<Request, Response>
             return;
         }
 
-        if (user.UserType != UserType.SuperAdmin)
+        if (user.UserType != UserType.SuperAdmin || user.UserType != UserType.Consultant)
         {
             AddError("Only Super Admin users can login via this endpoint");
             await SendErrorsAsync(StatusCodes.Status403Forbidden, cancellationToken);

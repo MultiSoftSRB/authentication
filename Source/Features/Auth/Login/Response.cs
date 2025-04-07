@@ -6,7 +6,6 @@ sealed class Response
 {
     public string AccessToken { get; set; }
     public User UserDetails { get; set; }
-    public List<Company> Companies { get; set; }
 
     internal sealed class User
     {
@@ -16,6 +15,8 @@ sealed class Response
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public UserType UserType { get; set; }
+        
+        public List<Company> UserCompanies { get; set; }
     }
 
     internal sealed class Company

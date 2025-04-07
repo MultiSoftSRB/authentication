@@ -73,7 +73,7 @@ sealed class Endpoint : Endpoint<Request, Response>
         var response = new Response
         {
             AccessToken = tokens.AccessToken,
-            Companies = userCompanies,
+       
             UserDetails = new()
             {
                 Id = user.Id,
@@ -81,8 +81,10 @@ sealed class Endpoint : Endpoint<Request, Response>
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Username = user.UserName
-            }
+                Username = user.UserName,
+                UserCompanies = userCompanies,
+            },
+           
         };
         
         await SendOkAsync(response, cancellationToken);

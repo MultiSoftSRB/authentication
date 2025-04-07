@@ -11,4 +11,14 @@ sealed class Response
     public string Username { get; set; }
     public UserType UserType { get; set; }
     public string[] PagePermissions { get; set; }
+    
+    public  List<Company> UserCompanies { get; set; } = new();
+    
+    internal sealed class Company
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+    }
+    
+    
 }

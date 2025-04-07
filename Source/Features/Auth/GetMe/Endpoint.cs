@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using MultiSoftSRB.Auth;
 using MultiSoftSRB.Database.Main;
 
@@ -17,6 +18,13 @@ sealed class Endpoint : EndpointWithoutRequest<Response>
     {
         var currentUserId = UserProvider.GetCurrentUserId();
         var currentUser = (await MainDbContext.Users.FindAsync(currentUserId, cancellationToken))!;
+        var userCompanies = await MainDbContext.UserCompanies
+            .Where(uc => uc.UserId == currentUserId)
+            .Select(uc => new Response.Company
+            {
+                Id = uc.Company.Id,
+                Name = uc.Company.Name
+            }).ToListAsync(cancellationToken);
 
         await SendOkAsync(new Response
         {
@@ -27,6 +35,8 @@ sealed class Endpoint : EndpointWithoutRequest<Response>
             Username = currentUser.UserName!,
             UserType = currentUser.UserType,
             PagePermissions = await UserProvider.GetCurrentUserPagePermissionsAsync(),
+            UserCompanies = userCompanies 
+            
         }, cancellationToken);
     }
 }
