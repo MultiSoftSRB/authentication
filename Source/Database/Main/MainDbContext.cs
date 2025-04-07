@@ -19,6 +19,7 @@ public class MainDbContext : DbContext
     public DbSet<ApiKeyPermission> ApiKeyPermissions { get; set; }
     public DbSet<AgencyClient> AgencyClients { get; set; }
     public DbSet<License> Licenses { get; set; }
+    public DbSet<RegistrationRequest> RegistrationRequests { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

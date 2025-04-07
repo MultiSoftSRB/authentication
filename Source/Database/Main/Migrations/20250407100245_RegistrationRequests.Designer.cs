@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MultiSoftSRB.Database.Main;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MultiSoftSRB.Database.Main.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250407100245_RegistrationRequests")]
+    partial class RegistrationRequests
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,65 +112,14 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Property<int>("DatabaseType")
                         .HasColumnType("integer");
 
-                    b.Property<short>("LicenseCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint")
-                        .HasDefaultValue((short)1);
-
-                    b.Property<long?>("LicenseId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LicenseId");
 
                     b.ToTable("Companies");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.License", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<decimal>("Price")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("numeric")
-                        .HasDefaultValue(0m);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Licenses");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.LicenseFeature", b =>
-                {
-                    b.Property<long>("LicenseId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("FeaturePermissionCode")
-                        .HasColumnType("text");
-
-                    b.HasKey("LicenseId", "FeaturePermissionCode");
-
-                    b.ToTable("LicenseFeature");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.RefreshToken", b =>
@@ -477,26 +429,6 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Navigation("ApiKey");
                 });
 
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Company", b =>
-                {
-                    b.HasOne("MultiSoftSRB.Entities.Main.License", "License")
-                        .WithMany("Companies")
-                        .HasForeignKey("LicenseId");
-
-                    b.Navigation("License");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.LicenseFeature", b =>
-                {
-                    b.HasOne("MultiSoftSRB.Entities.Main.License", "License")
-                        .WithMany("Features")
-                        .HasForeignKey("LicenseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("License");
-                });
-
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.RefreshToken", b =>
                 {
                     b.HasOne("MultiSoftSRB.Entities.Main.Company", "Company")
@@ -602,13 +534,6 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Navigation("Roles");
 
                     b.Navigation("UserCompanies");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.License", b =>
-                {
-                    b.Navigation("Companies");
-
-                    b.Navigation("Features");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Role", b =>
