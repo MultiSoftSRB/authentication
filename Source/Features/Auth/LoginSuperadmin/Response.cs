@@ -1,3 +1,5 @@
+using MultiSoftSRB.Entities.Main.Enums;
+
 namespace MultiSoftSRB.Features.Auth.LoginSuperadmin;
 
 sealed class Response
@@ -12,5 +14,16 @@ sealed class Response
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        
+        public UserType UserType { get; set; }
+        
+        public List<Company> UserCompanies { get; set; }
     }
+    
+    internal sealed class Company
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+    }
+    
 }

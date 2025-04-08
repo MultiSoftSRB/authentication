@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MultiSoftSRB.Database.Main;
 using MultiSoftSRB.Entities.Main;
 using MultiSoftSRB.Entities.Main.Enums;
 using MultiSoftSRB.Services;
@@ -10,6 +12,9 @@ sealed class Endpoint : Endpoint<Request, Response>
     public UserManager<User> UserManager { get; set; }
     public SignInManager<User> SignInManager { get; set; }
     public TokenService TokenService { get; set; }
+    
+    public MainDbContext MainDbContext { get; set; }
+    
     
     public override void Configure()
     {
@@ -37,7 +42,7 @@ sealed class Endpoint : Endpoint<Request, Response>
             return;
         }
 
-        if (user.UserType != UserType.SuperAdmin || user.UserType != UserType.Consultant)
+        if (user.UserType != UserType.SuperAdmin)
         {
             AddError("Only Super Admin users can login via this endpoint");
             await SendErrorsAsync(StatusCodes.Status403Forbidden, cancellationToken);
@@ -64,6 +69,9 @@ sealed class Endpoint : Endpoint<Request, Response>
         };
     
         HttpContext.Response.Cookies.Append("refreshToken", tokens.RefreshToken.Token, cookieOptions);
+        
+        var superAdminCompanies = await MainDbContext.Companies.ToListAsync(cancellationToken);
+
 
         var response = new Response
         {
@@ -74,7 +82,13 @@ sealed class Endpoint : Endpoint<Request, Response>
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Username = user.UserName
+                Username = user.UserName,
+                UserCompanies =  superAdminCompanies.Select(x => new Response.Company()
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                }).ToList(),
+                UserType = user.UserType
             }
         };
         
