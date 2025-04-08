@@ -64,15 +64,15 @@ public class LicenseProvider
     /// <summary>
     /// Create new session for the user, without the license. Handy in cases where user is accessing the app without company (ie. Superadmin).
     /// </summary>
-    public async Task<string> CreateSessionAsync(long userId)
+    public async Task<string> CreateSessionAsync(long userId, long? companyId)
     {
         var sessionId = GenerateSessionId();
         
         // Remove previous session if exists
         await RemovePreviousUserSessionAsync(userId);
 
-        // Store the new session with a null company ID
-        await StoreSessionAsync(userId, null, sessionId);
+        // Store the new session with a nullable companyId (no license acquisition)
+        await StoreSessionAsync(userId, companyId, sessionId);
         
         return sessionId;
     }

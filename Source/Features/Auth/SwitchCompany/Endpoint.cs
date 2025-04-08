@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using MultiSoftSRB.Auth;
 using MultiSoftSRB.Database.Main;
+using MultiSoftSRB.Entities.Main;
+using MultiSoftSRB.Entities.Main.Enums;
 using MultiSoftSRB.Services;
 
 namespace MultiSoftSRB.Features.Auth.SwitchCompany;
@@ -19,24 +21,27 @@ sealed class Endpoint : Endpoint<Request, Response>
     public override async Task HandleAsync(Request request, CancellationToken cancellationToken)
     {
         var currentUserId = UserProvider.GetCurrentUserId();
-        var company = await MainDbContext.UserCompanies
-            .Where(uc => uc.UserId == currentUserId && uc.CompanyId == request.CompanyId)
-            .Select(uc => uc.Company)
-            .SingleOrDefaultAsync(cancellationToken);
-        
-        if (company == null)
-        {
-            AddError("You don't have access to this company");
-            await SendErrorsAsync(StatusCodes.Status403Forbidden, cancellationToken);
-            return;
-        }
-
-        // Get user for token generation
         var user = await MainDbContext.Users.SingleOrDefaultAsync(u => u.Id == currentUserId, cancellationToken: cancellationToken);
         if (user == null)
         {
             AddError("User not found");
             await SendErrorsAsync(StatusCodes.Status404NotFound, cancellationToken);
+            return;
+        }
+
+        Company? company;
+        if (user.UserType is UserType.SuperAdmin or UserType.Consultant)
+            company = await MainDbContext.Companies.SingleOrDefaultAsync(c => c.Id == request.CompanyId, cancellationToken);
+        else
+            company = await MainDbContext.UserCompanies
+                .Where(uc => uc.UserId == currentUserId && uc.CompanyId == request.CompanyId)
+                .Select(uc => uc.Company)
+                .SingleOrDefaultAsync(cancellationToken);
+        
+        if (company == null)
+        {
+            AddError("You don't have access to this company");
+            await SendErrorsAsync(StatusCodes.Status403Forbidden, cancellationToken);
             return;
         }
 

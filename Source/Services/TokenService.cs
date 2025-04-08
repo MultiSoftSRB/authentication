@@ -8,6 +8,7 @@ using MultiSoftSRB.Auth;
 using MultiSoftSRB.Auth.Licensing;
 using MultiSoftSRB.Database.Main;
 using MultiSoftSRB.Entities.Main;
+using MultiSoftSRB.Entities.Main.Enums;
 
 namespace MultiSoftSRB.Services;
 
@@ -30,18 +31,25 @@ public class TokenService
         string sessionId;
         if (company != null)
         {
-            var acquisitionResponse = await _licenseProvider.TryAcquireLicenseAndCreateSessionAsync(user.Id, company.Id);
-            if (!acquisitionResponse.Success)
+            if (user.UserType is UserType.SuperAdmin or UserType.Consultant)
             {
-                ValidationContext.Instance.ThrowError("No available licenses.", StatusCodes.Status400BadRequest);
-                return default;
+                sessionId = await _licenseProvider.CreateSessionAsync(user.Id, company.Id);
             }
+            else
+            {
+                var acquisitionResponse = await _licenseProvider.TryAcquireLicenseAndCreateSessionAsync(user.Id, company.Id);
+                if (!acquisitionResponse.Success)
+                {
+                    ValidationContext.Instance.ThrowError("No available licenses.", StatusCodes.Status400BadRequest);
+                    return default;
+                }
             
-            sessionId = acquisitionResponse.SessionId;
+                sessionId = acquisitionResponse.SessionId;
+            }
         }
         else
         {
-            sessionId = await _licenseProvider.CreateSessionAsync(user.Id);
+            sessionId = await _licenseProvider.CreateSessionAsync(user.Id, null);
         }
 
         // Generate access token with session ID
