@@ -140,12 +140,19 @@ public class TokenService
 
         // Check if company exists
         Company? company = null;
-        if (currentUser.UserType != UserType.SuperAdmin && refreshToken.CompanyId.HasValue)
+        if (refreshToken.CompanyId.HasValue)
         {
-            company = await _mainDbContext.UserCompanies
-                .Where(uc => uc.UserId == refreshToken.UserId && uc.CompanyId == refreshToken.CompanyId)
-                .Select(uc => uc.Company)
-                .SingleOrDefaultAsync();
+            if (currentUser.UserType == UserType.SuperAdmin)
+            {
+                company = await _mainDbContext.Companies.FindAsync(refreshToken.CompanyId.Value);
+            }
+            else
+            {
+                company = await _mainDbContext.UserCompanies
+                    .Where(uc => uc.UserId == refreshToken.UserId && uc.CompanyId == refreshToken.CompanyId)
+                    .Select(uc => uc.Company)
+                    .SingleOrDefaultAsync();
+            }
 
             if (company == null)
             {
