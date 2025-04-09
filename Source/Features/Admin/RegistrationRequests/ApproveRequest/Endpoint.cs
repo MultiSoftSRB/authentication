@@ -8,7 +8,7 @@ using MultiSoftSRB.Services;
 
 namespace MultiSoftSRB.Features.Admin.RegistrationRequests.ApproveRequest;
 
-sealed class Endpoint : Endpoint<Request>
+sealed class Endpoint : EndpointWithoutRequest
 {
     public UserManager<User> UserManager { get; set; }
     public MainDbContext MainDbContext { get; set; }
@@ -17,41 +17,23 @@ sealed class Endpoint : Endpoint<Request>
     
     public override void Configure()
     {
-        Put("admin/registration-requests/{id}");
+        Post("admin/registration-requests/{id}/approve");
         Policies(CustomPolicies.SuperAdminOnly);
     }
 
-    public override async Task HandleAsync(Request? request, CancellationToken cancellationToken)
+    public override async Task HandleAsync(CancellationToken cancellationToken)
     {
         var id =  Route<long>("id");
-        RegistrationRequest? registrationRequest;
 
-        if (request == null)
+        var registrationRequest = await MainDbContext.RegistrationRequests
+            .Where(rr => rr.Id == id)
+            .SingleOrDefaultAsync(cancellationToken);
+        
+        if (registrationRequest == null)
         {
-            registrationRequest = await MainDbContext.RegistrationRequests
-                .Where(rr => rr.Id == id)
-                .SingleOrDefaultAsync(cancellationToken);
-            
-            if (registrationRequest == null)
-            {
-                AddError("Registration request not found");
-                await SendErrorsAsync(StatusCodes.Status404NotFound, cancellationToken);
-                return;
-            }
-        }
-        else
-        {
-            registrationRequest = new RegistrationRequest
-            {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Email = request.Email,
-                UserNameWithoutCompanyCode = request.UserNameWithoutCompanyCode,
-                Password = request.Password,
-                CompanyCode = request.CompanyCode,
-                CompanyName = request.CompanyName,
-                CompanyType = request.CompanyType
-            };
+            AddError("Registration request not found");
+            await SendErrorsAsync(StatusCodes.Status404NotFound, cancellationToken);
+            return;
         }
         
         // Check if email already exists
@@ -135,6 +117,9 @@ sealed class Endpoint : Endpoint<Request>
             
             await MainDbContext.UserRoles.AddAsync(userRole, cancellationToken);
             await MainDbContext.SaveChangesAsync(cancellationToken);
+
+            // At the end, we remove the registration request, as we approved it and created company from it
+            MainDbContext.Remove(registrationRequest);
             
             // After all the changes, now we commit the transaction
             await transaction.CommitAsync(cancellationToken);

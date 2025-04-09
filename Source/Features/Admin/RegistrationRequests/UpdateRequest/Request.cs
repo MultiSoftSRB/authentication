@@ -1,13 +1,12 @@
 using FluentValidation;
 using MultiSoftSRB.Entities.Main.Enums;
 
-namespace MultiSoftSRB.Features.Admin.RegistrationRequests.ApproveRequest;
+namespace MultiSoftSRB.Features.Admin.RegistrationRequests.UpdateRequest;
 
 sealed class Request
 {
     // User info
     public string Email { get; set; } = null!;
-    public string Password { get; set; } = null!;
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
     public string UserNameWithoutCompanyCode { get; set; } = null!;
@@ -27,13 +26,6 @@ sealed class Request
 
             RuleFor(x => x.UserNameWithoutCompanyCode)
                 .NotEmpty().WithMessage("Username is required");
-                
-            RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required")
-                .MinimumLength(8).WithMessage("Password must be at least 8 characters long")
-                .Matches("[A-Z]").WithMessage("Password must contain at least one uppercase letter")
-                .Matches("[0-9]").WithMessage("Password must contain at least one number")
-                .Matches("[^a-zA-Z0-9]").WithMessage("Password must contain at least one special character");
             
             RuleFor(x => x.FirstName)
                 .NotEmpty().WithMessage("First name is required")
