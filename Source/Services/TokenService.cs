@@ -140,7 +140,7 @@ public class TokenService
 
         // Check if company exists
         Company? company = null;
-        if (refreshToken.CompanyId.HasValue)
+        if (currentUser.UserType != UserType.SuperAdmin && refreshToken.CompanyId.HasValue)
         {
             company = await _mainDbContext.UserCompanies
                 .Where(uc => uc.UserId == refreshToken.UserId && uc.CompanyId == refreshToken.CompanyId)
