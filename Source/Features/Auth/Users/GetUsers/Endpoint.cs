@@ -27,6 +27,8 @@ sealed class Endpoint : EndpointWithoutRequest<List<Response>>
                 Email = u.Email,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
+                Username = u.UserName,
+                FullName = $"{u.FirstName} {u.LastName}",
                 Role = u.UserRoles
                     .Where(ur => ur.CompanyId == companyId)
                     .Select(ur => ur.Role.Name)

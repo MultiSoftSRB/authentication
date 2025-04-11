@@ -39,6 +39,13 @@ sealed class Endpoint : Endpoint<Request, Response>
             await SendErrorsAsync(StatusCodes.Status401Unauthorized, cancellationToken);
             return;
         }
+
+        if (user.UserType == UserType.SuperAdmin)
+        {
+            AddError("Cant login to super admin from this endpoint");
+            await SendErrorsAsync(StatusCodes.Status401Unauthorized, cancellationToken);
+            return;
+        }
         
         // Update last login time
         user.LastLoginTime = DateTime.Now;

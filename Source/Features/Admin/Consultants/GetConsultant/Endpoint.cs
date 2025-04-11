@@ -34,7 +34,7 @@ sealed class Endpoint : EndpointWithoutRequest<Response>
         var response = new Response
         {
             Id = consultant.Id,
-            UserName = consultant.UserName,
+            Username = consultant.UserName,
             Email = consultant.Email,
             FullName = $"{consultant.FirstName} {consultant.LastName}",
             PhoneNumber = consultant.PhoneNumber,
