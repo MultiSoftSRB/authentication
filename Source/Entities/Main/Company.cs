@@ -10,6 +10,8 @@ public class Company : BaseEntity
     public DatabaseType DatabaseType { get; set; }
     public long? LicenseId { get; set; }
     public short LicenseCount { get; set; } = 1;
+    
+    public bool IsAgency { get; set; }
         
     // Navigation properties
     public virtual License? License { get; set; }
