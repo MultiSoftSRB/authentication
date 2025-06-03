@@ -36,6 +36,7 @@
 
     <ItemGroup>
       <Folder Include="Features\Agency\" />
+      <Folder Include="Features\CnfSettings\" />
     </ItemGroup>
 
 </Project>
