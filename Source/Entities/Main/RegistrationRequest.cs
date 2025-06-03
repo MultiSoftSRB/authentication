@@ -16,5 +16,6 @@ public class RegistrationRequest : BaseEntity
     // Company info
     public string CompanyName { get; set; } = null!;
     public string CompanyCode { get; set; } = null!;
-    public DatabaseType CompanyType { get; set; }
+    
+    
 }

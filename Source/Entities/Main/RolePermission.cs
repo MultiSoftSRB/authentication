@@ -2,7 +2,7 @@ namespace MultiSoftSRB.Entities.Main;
 
 public class RolePermission
 {
-    public long RoleId { get; set; }
+    public int RoleId { get; set; }
     public string PagePermissionCode { get; set; } = null!;
         
     // Navigation property

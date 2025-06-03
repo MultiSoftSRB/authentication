@@ -10,7 +10,6 @@ using MultiSoftSRB.Auth.ApiKey;
 using MultiSoftSRB.Auth.Licensing;
 using MultiSoftSRB.Auth.Permissions;
 using MultiSoftSRB.Database.Audit;
-using MultiSoftSRB.Database.Company;
 using MultiSoftSRB.Database.Main;
 using MultiSoftSRB.Entities.Main;
 using MultiSoftSRB.Extensions;
@@ -48,11 +47,12 @@ builder.Services.AddDbContext<MainAuditDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("MainAuditDatabase"));
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
+/*
 builder.Services.AddDbContext<CompanyAuditDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("CompanyAuditDatabase"));
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-});
+});*/
 builder.Services.AddSingleton<AuditOptions>();
         
 builder.Services.AddSingleton<AuditOptions>(_ => {
@@ -71,11 +71,11 @@ builder.Services
        .AddEntityFrameworkStores<MainDbContext>()
        .AddDefaultTokenProviders();
 
-builder.Services.AddDbContext<CompanyDbContext>();
-builder.Services.AddDbContext<CompanyMigrationDbContext>();
+//builder.Services.AddDbContext<CompanyDbContext>();
+//builder.Services.AddDbContext<CompanyMigrationDbContext>();
 
-builder.Services.Configure<CompanyConnectionStrings>(options =>
-    builder.Configuration.GetSection($"{nameof(CompanyConnectionStrings)}").Bind(options));
+//builder.Services.Configure<CompanyConnectionStrings>(options =>
+  //  builder.Configuration.GetSection($"{nameof(CompanyConnectionStrings)}").Bind(options));
 
 #endregion
 

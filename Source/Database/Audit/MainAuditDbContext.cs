@@ -16,6 +16,14 @@ public class MainAuditDbContext : BaseAuditDbContext
     public DbSet<ApiKeyPermissionAuditLog> ApiKeyPermissions { get; set; }
     public DbSet<AgencyClientAuditLog> AgencyClients { get; set; }
     public DbSet<RegistrationRequestAuditLog> RegistrationRequests { get; set; }
+    public DbSet<ArticleAuditLog> Articles { get; set; }
+    public DbSet<CountryAuditLog> Countries { get; set; }
+    public DbSet<RegionAuditLog> Regions { get; set; }
+    public DbSet<MunicipalityAuditLog> Municipalities { get; set; }
+    public DbSet<SettlementAuditLog> Settlements { get; set; }
+    public DbSet<AddressAuditLog> Addresses { get; set; }
+    
+
     
     public MainAuditDbContext(DbContextOptions<MainAuditDbContext> options) : base(options) {}
 }

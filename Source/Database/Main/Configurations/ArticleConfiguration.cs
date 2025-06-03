@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MultiSoftSRB.Entities.Company;
 
-namespace MultiSoftSRB.Database.Company.Configurations;
+namespace MultiSoftSRB.Database.Main.Configurations;
 
 public class ArticleConfiguration : IEntityTypeConfiguration<Article>
 {

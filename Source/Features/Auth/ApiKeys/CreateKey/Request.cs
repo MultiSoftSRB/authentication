@@ -3,7 +3,7 @@ using FluentValidation;
 namespace MultiSoftSRB.Features.Auth.ApiKeys.CreateKey;
 
 sealed class Request { 
-    public long CompanyId { get; set; }
+    public short CompanyId { get; set; }
     public string Name { get; set; } = null!;
     public DateTime? ExpiresAt { get; set; }
     public List<string> Permissions { get; set; } = [];

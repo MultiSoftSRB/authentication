@@ -21,9 +21,10 @@ public static class AuditTypeMapper
         EntityToAuditTypeMap[typeof(ApiKey)] = typeof(ApiKeyAuditLog);
         EntityToAuditTypeMap[typeof(ApiKeyPermission)] = typeof(ApiKeyPermissionAuditLog);
         EntityToAuditTypeMap[typeof(AgencyClient)] = typeof(AgencyClientAuditLog);
+        EntityToAuditTypeMap[typeof(Article)] = typeof(ArticleAuditLog);
         
         // Company context entities
-        EntityToAuditTypeMap[typeof(Article)] = typeof(ArticleAuditLog);
+   //     EntityToAuditTypeMap[typeof(Article)] = typeof(ArticleAuditLog);
     }
     
     // Get the audit type for a given entity type

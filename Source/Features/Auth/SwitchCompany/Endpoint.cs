@@ -11,6 +11,8 @@ sealed class Endpoint : Endpoint<Request, Response>
 {
     public MainDbContext MainDbContext { get; set; }
     public UserProvider UserProvider { get; set; }
+    
+    public CompanyProvider CompanyProvider { get; set; }
     public TokenService TokenService { get; set; }
     
     public override void Configure()

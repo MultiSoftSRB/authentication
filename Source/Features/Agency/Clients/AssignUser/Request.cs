@@ -4,9 +4,9 @@ namespace MultiSoftSRB.Features.Agency.Clients.AssignUser;
 
 sealed class Request
 {
-    public long CompanyId { get; set; }
+    public short CompanyId { get; set; }
     public long UserId { get; set; }
-    public long RoleId { get; set; }
+    public int RoleId { get; set; }
 
     internal sealed class Validator : Validator<Request>
     {

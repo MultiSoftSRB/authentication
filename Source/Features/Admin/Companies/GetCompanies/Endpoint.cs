@@ -22,7 +22,6 @@ sealed class Endpoint : EndpointWithoutRequest<List<Response>>
             Name = c.Name,
             Code = c.Code,
             CreatedAt = c.CreatedAt,
-            DatabaseType = c.DatabaseType
         }).ToListAsync(cancellationToken);
 
         SendOkAsync(response, cancellationToken);

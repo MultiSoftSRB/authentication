@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MultiSoftSRB.Entities.Company;
 using MultiSoftSRB.Entities.Main;
 
 namespace MultiSoftSRB.Database.Main;
@@ -20,6 +21,16 @@ public class MainDbContext : DbContext
     public DbSet<AgencyClient> AgencyClients { get; set; }
     public DbSet<License> Licenses { get; set; }
     public DbSet<RegistrationRequest> RegistrationRequests { get; set; }
+    
+    public DbSet<Article> Articles { get; set; }
+    
+    public DbSet<Country> Countries { get; set; }
+    public DbSet<Region> Regions  { get; set; }
+    public DbSet<Municipality> Municipalities { get; set; }
+    public DbSet<Settlement> Settlements { get; set; }
+    public DbSet<Address> Addresses { get; set; }
+    
+    
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

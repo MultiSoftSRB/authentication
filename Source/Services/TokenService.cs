@@ -77,8 +77,7 @@ public class TokenService
         if (company != null)
         {
             claims.Add(
-                new Claim(CustomClaimTypes.CompanyId, company.Id.ToString()),
-                new Claim(CustomClaimTypes.DatabaseType, ((int)company.DatabaseType).ToString())
+                new Claim(CustomClaimTypes.CompanyId, company.Id.ToString())
             );
         }
 
@@ -98,7 +97,7 @@ public class TokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public async Task<RefreshToken> GenerateRefreshTokenAsync(long userId, long? companyId)
+    public async Task<RefreshToken> GenerateRefreshTokenAsync(long userId, short? companyId)
     {
         // Generate a secure random token
         var randomBytes = new byte[64];

@@ -34,7 +34,6 @@ sealed class Endpoint : Endpoint<Request>
         registrationRequest.LastName = request.LastName;
         registrationRequest.Email = request.Email;
         registrationRequest.UserNameWithoutCompanyCode = request.UserNameWithoutCompanyCode;
-        registrationRequest.CompanyType = request.CompanyType;
         registrationRequest.CompanyCode = request.CompanyCode;
         registrationRequest.CompanyName = request.CompanyName;
         

@@ -24,8 +24,7 @@ sealed class Endpoint : Endpoint<Request>
             UserNameWithoutCompanyCode = request.UserNameWithoutCompanyCode,
             Password = request.Password,
             CompanyCode = request.CompanyCode,
-            CompanyName = request.CompanyName,
-            CompanyType = request.CompanyType
+            CompanyName = request.CompanyName
         };
         
         await MainDbContext.RegistrationRequests.AddAsync(registrationRequest, cancellationToken);

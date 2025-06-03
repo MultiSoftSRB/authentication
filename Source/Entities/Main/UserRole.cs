@@ -1,10 +1,10 @@
 namespace MultiSoftSRB.Entities.Main;
 
-public class UserRole
+public class UserRole 
 {
     public long UserId { get; set; }
-    public long RoleId { get; set; }
-    public long CompanyId { get; set; }
+    public int RoleId { get; set; }
+    public short CompanyId { get; set; }
         
     // Navigation properties
     public virtual User User { get; set; } = null!;

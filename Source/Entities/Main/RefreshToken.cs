@@ -10,7 +10,7 @@ public class RefreshToken : BaseEntity
     public bool IsRevoked { get; set; }
     public DateTime? RevokedAt { get; set; }
     
-    public long? CompanyId { get; set; }
+    public short? CompanyId { get; set; }
     public bool IsActive => !IsRevoked && DateTime.UtcNow < ExpiresAt;
     
     // Navigation properties

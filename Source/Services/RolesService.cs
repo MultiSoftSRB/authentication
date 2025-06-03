@@ -5,7 +5,7 @@ namespace MultiSoftSRB.Services;
 
 public class RolesService
 {
-    public List<Role> GenerateDefaultRoles(long companyId)
+    public List<Role> GenerateDefaultRoles(short companyId)
     {
         return
         [

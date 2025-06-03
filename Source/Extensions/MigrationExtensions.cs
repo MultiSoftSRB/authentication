@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MultiSoftSRB.Auth;
 using MultiSoftSRB.Database.Audit;
-using MultiSoftSRB.Database.Company;
 using MultiSoftSRB.Database.Main;
 using MultiSoftSRB.Entities.Main.Enums;
 
@@ -21,7 +20,7 @@ public static class MigrationExtensions
         mainDbContext.Database.Migrate();
 
         // Apply migrations for all company databases (CompanyMigrationDbContext)
-        var companyConnectionStrings = services.GetRequiredService<IOptions<CompanyConnectionStrings>>();
+        /*var companyConnectionStrings = services.GetRequiredService<IOptions<CompanyConnectionStrings>>();
         foreach (var connectionString in companyConnectionStrings.Value.Values)
         {
             var optionsBuilder = new DbContextOptionsBuilder<CompanyMigrationDbContext>();
@@ -31,7 +30,7 @@ public static class MigrationExtensions
             
             Console.WriteLine($"Applying migrations for {(DatabaseType)connectionString.Key} database...");
             dbContext.Database.Migrate();
-        }
+        }*/
         
         // Apply migrations for MainAuditDbContext
         var mainAuditDbContext = services.GetRequiredService<MainAuditDbContext>();
@@ -39,9 +38,9 @@ public static class MigrationExtensions
         mainAuditDbContext.Database.Migrate();
         
         // Apply migrations for CompanyAuditDbContext
-        var companyAuditDbContext = services.GetRequiredService<CompanyAuditDbContext>();
+        /*var companyAuditDbContext = services.GetRequiredService<CompanyAuditDbContext>();
         Console.WriteLine("Applying migrations for CompanyAuditDbContext...");
-        companyAuditDbContext.Database.Migrate();
+        companyAuditDbContext.Database.Migrate();*/
 
         Console.WriteLine("All migrations applied successfully.");
     }

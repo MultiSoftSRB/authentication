@@ -1,8 +1,12 @@
 namespace MultiSoftSRB.Entities.Main;
 
-public class Role : BaseEntity
+public class Role 
+
+    
 {
-    public long CompanyId { get; set; }
+    
+    public int Id { get; set; }
+    public short CompanyId { get; set; }
     public string Name { get; set; } = null!;
     public string? Description { get; set; }
     

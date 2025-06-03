@@ -61,8 +61,7 @@ sealed class Endpoint : EndpointWithoutRequest
             var company = new Company
             {
                 Name = registrationRequest.CompanyName,
-                Code = registrationRequest.CompanyCode,
-                DatabaseType = registrationRequest.CompanyType
+                Code = registrationRequest.CompanyCode
             };
             
             await MainDbContext.Companies.AddAsync(company, cancellationToken);

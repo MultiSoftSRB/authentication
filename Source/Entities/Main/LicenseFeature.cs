@@ -2,7 +2,7 @@ namespace MultiSoftSRB.Entities.Main;
 
 public class LicenseFeature
 {
-    public long LicenseId { get; set; }
+    public int LicenseId { get; set; }
     public string FeaturePermissionCode { get; set; } = null!;
         
     // Navigation property

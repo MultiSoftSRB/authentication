@@ -90,11 +90,13 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
         
         // Group audit logs by entity type
         var auditsByEntityType = _pendingAudits
-            .GroupBy(kv => kv.Key.Entity.GetType());
+            .GroupBy(kv => kv.Key.Entity.GetType());/*
             
         BaseAuditDbContext auditContext = context is MainDbContext
             ? scope.ServiceProvider.GetRequiredService<MainAuditDbContext>()
-            : scope.ServiceProvider.GetRequiredService<CompanyAuditDbContext>();
+            : scope.ServiceProvider.GetRequiredService<CompanyAuditDbContext>();*/
+
+        BaseAuditDbContext auditContext = scope.ServiceProvider.GetRequiredService<MainAuditDbContext>();
         
         foreach (var group in auditsByEntityType)
         {

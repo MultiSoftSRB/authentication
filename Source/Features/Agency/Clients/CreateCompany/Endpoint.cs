@@ -43,7 +43,6 @@ sealed class Endpoint : Endpoint<Request, Response>
             {
                 Name = request.CompanyName,
                 Code = request.CompanyCode,
-                DatabaseType = request.CompanyType
             };
             
             await MainDbContext.Companies.AddAsync(clientCompany, cancellationToken);

@@ -8,6 +8,8 @@ public class ApiKeyConfiguration : IEntityTypeConfiguration<ApiKey>
 {
     public void Configure(EntityTypeBuilder<ApiKey> builder)
     {
+        
+        
         builder.HasOne(e => e.Company)
             .WithMany(c => c.ApiKeys)
             .HasForeignKey(e => e.CompanyId)

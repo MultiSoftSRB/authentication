@@ -2,12 +2,12 @@ using MultiSoftSRB.Entities.Main.Enums;
 
 namespace MultiSoftSRB.Entities.Main;
 
-public class Company : BaseEntity
+public class Company 
 {
+    public short Id { get; set; }
     public string Name { get; set; } = null!;
     public string Code { get; set; } = null!;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DatabaseType DatabaseType { get; set; }
     public long? LicenseId { get; set; }
     public short LicenseCount { get; set; } = 1;
     

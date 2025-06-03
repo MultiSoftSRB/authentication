@@ -9,19 +9,19 @@ public class CompanyProvider
     private readonly CompanyConnectionStrings _connectionStrings;
 
     public CompanyProvider(
-        IHttpContextAccessor httpContextAccessor,
-        IOptions<CompanyConnectionStrings> connectionStrings)
+        IHttpContextAccessor httpContextAccessor)
+       // IOptions<CompanyConnectionStrings> connectionStrings)
     {
         _httpContextAccessor = httpContextAccessor;
-        _connectionStrings = connectionStrings.Value;
+       // _connectionStrings = connectionStrings.Value;
     }
 
-    public long GetCompanyId()
+    public short GetCompanyId()
     {
         var user = _httpContextAccessor.HttpContext?.User;
         var companyClaim = user?.FindFirst(CustomClaimTypes.CompanyId)?.Value;
 
-        if (string.IsNullOrEmpty(companyClaim) || !long.TryParse(companyClaim, out long companyId))
+        if (string.IsNullOrEmpty(companyClaim) || !short.TryParse(companyClaim, out short companyId))
         {
             ValidationContext.Instance.ThrowError("Company ID is not present in the token.", StatusCodes.Status401Unauthorized);
             return default;
@@ -30,7 +30,7 @@ public class CompanyProvider
         return companyId;
     }
     
-    public DatabaseType GetDatabaseType()
+    /*public DatabaseType GetDatabaseType()
     {
         var user = _httpContextAccessor.HttpContext?.User;
         var databaseClaim = user?.FindFirst(CustomClaimTypes.DatabaseType)?.Value;
@@ -59,5 +59,5 @@ public class CompanyProvider
     public string GetFirstConnectionStringForMigration()
     {
         return _connectionStrings.Values.First().Value;
-    }
+    }*/
 }

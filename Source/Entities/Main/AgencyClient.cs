@@ -2,8 +2,8 @@ namespace MultiSoftSRB.Entities.Main;
 
 public class AgencyClient
 {
-    public long AgencyCompanyId { get; set; }
-    public long ClientCompanyId { get; set; }
+    public short AgencyCompanyId { get; set; }
+    public short ClientCompanyId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         
     // Navigation properties

@@ -77,6 +77,13 @@ namespace MultiSoftSRB.Database.Audit.Migrations.Main
                     b.UseTpcMappingStrategy();
                 });
 
+            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.AddressAuditLog", b =>
+                {
+                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
+
+                    b.ToTable("Addresses");
+                });
+
             modelBuilder.Entity("MultiSoftSRB.Entities.Audit.AgencyClientAuditLog", b =>
                 {
                     b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
@@ -98,6 +105,13 @@ namespace MultiSoftSRB.Database.Audit.Migrations.Main
                     b.ToTable("ApiKeyPermissions");
                 });
 
+            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.ArticleAuditLog", b =>
+                {
+                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
+
+                    b.ToTable("Articles");
+                });
+
             modelBuilder.Entity("MultiSoftSRB.Entities.Audit.CompanyAuditLog", b =>
                 {
                     b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
@@ -105,11 +119,32 @@ namespace MultiSoftSRB.Database.Audit.Migrations.Main
                     b.ToTable("Companies");
                 });
 
+            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.CountryAuditLog", b =>
+                {
+                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
+
+                    b.ToTable("Countries");
+                });
+
             modelBuilder.Entity("MultiSoftSRB.Entities.Audit.DefaultAuditLog", b =>
                 {
                     b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
 
                     b.ToTable("DefaultAuditLogs");
+                });
+
+            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.MunicipalityAuditLog", b =>
+                {
+                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
+
+                    b.ToTable("Municipalities");
+                });
+
+            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.RegionAuditLog", b =>
+                {
+                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
+
+                    b.ToTable("Regions");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Audit.RegistrationRequestAuditLog", b =>
@@ -131,6 +166,13 @@ namespace MultiSoftSRB.Database.Audit.Migrations.Main
                     b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
 
                     b.ToTable("RolePermissions");
+                });
+
+            modelBuilder.Entity("MultiSoftSRB.Entities.Audit.SettlementAuditLog", b =>
+                {
+                    b.HasBaseType("MultiSoftSRB.Entities.Audit.AuditLog");
+
+                    b.ToTable("Settlements");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Audit.UserAuditLog", b =>

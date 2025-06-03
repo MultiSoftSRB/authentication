@@ -29,8 +29,7 @@ sealed class Endpoint : EndpointWithoutRequest<Response>
                     LastName = rr.LastName,
                     UserNameWithoutCompanyCode = rr.UserNameWithoutCompanyCode,
                     CompanyName = rr.CompanyName,
-                    CompanyCode = rr.CompanyCode,
-                    CompanyType = rr.CompanyType
+                    CompanyCode = rr.CompanyCode
                 })
             .SingleOrDefaultAsync(cancellationToken);
 

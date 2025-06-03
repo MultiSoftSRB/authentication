@@ -2,7 +2,7 @@ namespace MultiSoftSRB.Entities.Main;
 
 public class ApiKey : BaseEntity
 {
-    public long CompanyId { get; set; }
+    public short CompanyId { get; set; }
     public string KeyHash { get; set; } = null!;
     public string Name { get; set; } = null!;
     public DateTime CreatedAt { get; set; }

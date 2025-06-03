@@ -9,7 +9,7 @@ sealed class Request
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
     public string Password { get; set; } = null!;
-    public long RoleId { get; set; }
+    public int RoleId { get; set; }
     
     internal sealed class CreateCompanyUserValidator : Validator<Request>
     {

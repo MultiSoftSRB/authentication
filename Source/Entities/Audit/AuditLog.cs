@@ -30,3 +30,10 @@ public class RegistrationRequestAuditLog : AuditLog { }
 
 // Empty derived classes just for table separation from Company entities
 public class ArticleAuditLog : AuditLog { }
+public class CountryAuditLog  : AuditLog { }
+public class MunicipalityAuditLog  : AuditLog { }
+public class RegionAuditLog : AuditLog { }
+public class SettlementAuditLog  : AuditLog { }
+
+public class AddressAuditLog : AuditLog {}
+
