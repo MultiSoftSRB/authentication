@@ -11,6 +11,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
     
     public void Configure(EntityTypeBuilder<Address> builder)
     {
+        builder.ToTable("Addresses", schema: "cnf");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Street)
@@ -30,7 +31,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
             .HasDefaultValue(true);
 
         builder.HasOne(x => x.Settlement)
-            .WithMany()
+            .WithMany(a => a.Addresses)
             .HasForeignKey(x => x.SettlementId)
             .OnDelete(DeleteBehavior.Cascade);
     }

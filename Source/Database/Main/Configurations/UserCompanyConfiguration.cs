@@ -9,6 +9,8 @@ public class UserCompanyConfiguration : IEntityTypeConfiguration<UserCompany>
 {
     public void Configure(EntityTypeBuilder<UserCompany> builder)
     {
+        
+        builder.ToTable("UserCompanies", schema: "ath");
         builder.HasKey(e => new { e.UserId, e.CompanyId });
         builder.Property(e => e.AccessType).HasDefaultValue(AccessType.Direct);
         

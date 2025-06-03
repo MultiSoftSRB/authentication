@@ -8,6 +8,9 @@ public class RegistrationRequestConfiguration : IEntityTypeConfiguration<Registr
 {
     public void Configure(EntityTypeBuilder<RegistrationRequest> builder)
     {
+        
+        
+        builder.ToTable("RegistrationRequests", schema: "ath");
         builder.Property(e => e.UserNameWithoutCompanyCode).IsRequired().HasMaxLength(256);
         builder.Property(e => e.Email).IsRequired().HasMaxLength(256);
         builder.Property(e => e.FirstName).IsRequired().HasMaxLength(64);

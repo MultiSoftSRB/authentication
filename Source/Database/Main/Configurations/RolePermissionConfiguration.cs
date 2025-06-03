@@ -8,6 +8,9 @@ public class RolePermissionConfiguration : IEntityTypeConfiguration<RolePermissi
 {
     public void Configure(EntityTypeBuilder<RolePermission> builder)
     {
+        
+        
+        builder.ToTable("RolePermissions", schema: "ath");
         builder.HasKey(e => new { e.RoleId, e.PagePermissionCode });
         
         builder.HasOne(e => e.Role)

@@ -8,7 +8,7 @@ public class Municipality
     public string? MunicipalityCode { get; set; }
     public bool IsActive { get; set; } 
     
-    public Region? Region { get; set; }
+    public Region Region { get; set; }
     
     public ICollection<Settlement> Settlements { get; set; } = new List<Settlement>();
 }

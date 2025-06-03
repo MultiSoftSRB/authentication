@@ -8,6 +8,8 @@ public class ApiKeyPermissionConfiguration: IEntityTypeConfiguration<ApiKeyPermi
 {
     public void Configure(EntityTypeBuilder<ApiKeyPermission> builder)
     {
+        
+        builder.ToTable("ApiKeyPermissions", schema: "ath");
         builder.HasKey(e => new { e.ApiKeyId, e.ResourcePermissionCode });
                 
         builder.HasOne(e => e.ApiKey)

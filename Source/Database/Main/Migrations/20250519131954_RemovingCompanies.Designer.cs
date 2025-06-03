@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MultiSoftSRB.Database.Main;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MultiSoftSRB.Database.Main.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250519131954_RemovingCompanies")]
+    partial class RemovingCompanies
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,13 +38,11 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
@@ -51,56 +52,13 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.ToTable("Articles");
                 });
 
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Address", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Apartment")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<bool>("IsPrimary")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
-                    b.Property<int>("SettlementId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Street")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("StreetNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SettlementId");
-
-                    b.ToTable("Addresses", "cnf");
-                });
-
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.AgencyClient", b =>
                 {
-                    b.Property<short>("AgencyCompanyId")
-                        .HasColumnType("smallint");
+                    b.Property<long>("AgencyCompanyId")
+                        .HasColumnType("bigint");
 
-                    b.Property<short>("ClientCompanyId")
-                        .HasColumnType("smallint");
+                    b.Property<long>("ClientCompanyId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -120,8 +78,8 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<short>("CompanyId")
-                        .HasColumnType("smallint");
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -146,7 +104,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("CreatedBy");
 
-                    b.ToTable("ApiKeys", "ath");
+                    b.ToTable("ApiKeys");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.ApiKeyPermission", b =>
@@ -159,16 +117,16 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasKey("ApiKeyId", "ResourcePermissionCode");
 
-                    b.ToTable("ApiKeyPermissions", "ath");
+                    b.ToTable("ApiKeyPermissions");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Company", b =>
                 {
-                    b.Property<short>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<short>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -191,9 +149,6 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Property<long?>("LicenseId")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("LicenseId1")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -201,92 +156,18 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LicenseId1");
+                    b.HasIndex("LicenseId");
 
-                    b.ToTable("Companies", "ath");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Country", b =>
-                {
-                    b.Property<short>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<short>("Id"));
-
-                    b.Property<string>("Capital")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Currency")
-                        .HasMaxLength(3)
-                        .HasColumnType("character varying(3)");
-
-                    b.Property<string>("CurrencySymbol")
-                        .HasMaxLength(5)
-                        .HasColumnType("character varying(5)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("Iso3Code")
-                        .HasMaxLength(3)
-                        .HasColumnType("character varying(3)");
-
-                    b.Property<string>("IsoCode")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("character varying(2)");
-
-                    b.Property<float?>("Latitude")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Longitude")
-                        .HasColumnType("real");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("NativeName")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<short?>("NumericCode")
-                        .HasColumnType("smallint");
-
-                    b.Property<string>("PhoneCode")
-                        .HasMaxLength(5)
-                        .HasColumnType("character varying(5)");
-
-                    b.Property<string>("Tld")
-                        .HasMaxLength(5)
-                        .HasColumnType("character varying(5)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Iso3Code")
-                        .IsUnique();
-
-                    b.HasIndex("IsoCode")
-                        .IsUnique();
-
-                    b.HasIndex("NumericCode")
-                        .IsUnique();
-
-                    b.ToTable("Countries", "cnf");
+                    b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.License", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -305,52 +186,20 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Licenses", "ath");
+                    b.ToTable("Licenses");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.LicenseFeature", b =>
                 {
-                    b.Property<int>("LicenseId")
-                        .HasColumnType("integer");
+                    b.Property<long>("LicenseId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("FeaturePermissionCode")
                         .HasColumnType("text");
 
                     b.HasKey("LicenseId", "FeaturePermissionCode");
 
-                    b.ToTable("LicenseFeature", "ath");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Municipality", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("MunicipalityCode")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<int>("RegionId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RegionId");
-
-                    b.ToTable("Municipalities", "cnf");
+                    b.ToTable("LicenseFeature");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.RefreshToken", b =>
@@ -361,8 +210,8 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<short?>("CompanyId")
-                        .HasColumnType("smallint");
+                    b.Property<long?>("CompanyId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -393,49 +242,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", "ath");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Region", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.Property<short>("CountryId")
-                        .HasColumnType("smallint");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
-                    b.Property<float?>("Latitude")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Longitude")
-                        .HasColumnType("real");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Type")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
-
-                    b.ToTable("Regions", "cnf");
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.RegistrationRequest", b =>
@@ -485,19 +292,19 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RegistrationRequests", "ath");
+                    b.ToTable("RegistrationRequests");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Role", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<short>("CompanyId")
-                        .HasColumnType("smallint");
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -510,61 +317,20 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Roles", "ath");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.RolePermission", b =>
                 {
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer");
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("PagePermissionCode")
                         .HasColumnType("text");
 
                     b.HasKey("RoleId", "PagePermissionCode");
 
-                    b.ToTable("RolePermissions", "ath");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Settlement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("Elevation")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
-                    b.Property<float?>("Latitude")
-                        .HasColumnType("real");
-
-                    b.Property<float?>("Longitude")
-                        .HasColumnType("real");
-
-                    b.Property<int>("MunicipalityId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("PostalCode")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MunicipalityId");
-
-                    b.ToTable("Settlements", "cnf");
+                    b.ToTable("RolePermissions");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.User", b =>
@@ -592,9 +358,6 @@ namespace MultiSoftSRB.Database.Main.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("GeoSettlementId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("LastLoginTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -602,13 +365,8 @@ namespace MultiSoftSRB.Database.Main.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<short?>("LastUsedCompanyId")
-                        .HasColumnType("smallint");
-
-                    b.Property<string>("Locale")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                    b.Property<long?>("LastUsedCompanyId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -636,11 +394,6 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
-                    b.Property<string>("TimeZone")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
@@ -653,7 +406,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", "ath");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.UserCompany", b =>
@@ -661,16 +414,16 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.Property<short>("CompanyId")
-                        .HasColumnType("smallint");
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("AccessType")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasDefaultValue(1);
 
-                    b.Property<short?>("AgencyCompanyId")
-                        .HasColumnType("smallint");
+                    b.Property<long?>("AgencyCompanyId")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsPrimary")
                         .HasColumnType("boolean");
@@ -681,7 +434,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("UserCompanies", "ath");
+                    b.ToTable("UserCompanies");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.UserRole", b =>
@@ -689,11 +442,11 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer");
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
 
-                    b.Property<short>("CompanyId")
-                        .HasColumnType("smallint");
+                    b.Property<long>("CompanyId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -701,18 +454,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles", "ath");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Address", b =>
-                {
-                    b.HasOne("MultiSoftSRB.Entities.Main.Settlement", "Settlement")
-                        .WithMany("Addresses")
-                        .HasForeignKey("SettlementId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Settlement");
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.AgencyClient", b =>
@@ -768,7 +510,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
                 {
                     b.HasOne("MultiSoftSRB.Entities.Main.License", "License")
                         .WithMany("Companies")
-                        .HasForeignKey("LicenseId1");
+                        .HasForeignKey("LicenseId");
 
                     b.Navigation("License");
                 });
@@ -782,17 +524,6 @@ namespace MultiSoftSRB.Database.Main.Migrations
                         .IsRequired();
 
                     b.Navigation("License");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Municipality", b =>
-                {
-                    b.HasOne("MultiSoftSRB.Entities.Main.Region", "Region")
-                        .WithMany("Municipalities")
-                        .HasForeignKey("RegionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Region");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.RefreshToken", b =>
@@ -811,17 +542,6 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Navigation("Company");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Region", b =>
-                {
-                    b.HasOne("MultiSoftSRB.Entities.Main.Country", "Country")
-                        .WithMany("Regions")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Country");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Role", b =>
@@ -844,17 +564,6 @@ namespace MultiSoftSRB.Database.Main.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Settlement", b =>
-                {
-                    b.HasOne("MultiSoftSRB.Entities.Main.Municipality", "Municipality")
-                        .WithMany("Settlements")
-                        .HasForeignKey("MunicipalityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Municipality");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.UserCompany", b =>
@@ -924,11 +633,6 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Navigation("UserCompanies");
                 });
 
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Country", b =>
-                {
-                    b.Navigation("Regions");
-                });
-
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.License", b =>
                 {
                     b.Navigation("Companies");
@@ -936,26 +640,11 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Navigation("Features");
                 });
 
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Municipality", b =>
-                {
-                    b.Navigation("Settlements");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Region", b =>
-                {
-                    b.Navigation("Municipalities");
-                });
-
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Role", b =>
                 {
                     b.Navigation("Permissions");
 
                     b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("MultiSoftSRB.Entities.Main.Settlement", b =>
-                {
-                    b.Navigation("Addresses");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.User", b =>

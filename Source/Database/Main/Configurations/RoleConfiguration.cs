@@ -8,6 +8,8 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
 {
     public void Configure(EntityTypeBuilder<Role> builder)
     {
+        
+        builder.ToTable("Roles", schema: "ath");
         builder.HasOne(e => e.Company)
               .WithMany(c => c.Roles)
               .HasForeignKey(e => e.CompanyId)

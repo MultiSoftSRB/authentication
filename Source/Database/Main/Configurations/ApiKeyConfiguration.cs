@@ -9,7 +9,7 @@ public class ApiKeyConfiguration : IEntityTypeConfiguration<ApiKey>
     public void Configure(EntityTypeBuilder<ApiKey> builder)
     {
         
-        
+        builder.ToTable("ApiKeys", schema: "ath");
         builder.HasOne(e => e.Company)
             .WithMany(c => c.ApiKeys)
             .HasForeignKey(e => e.CompanyId)

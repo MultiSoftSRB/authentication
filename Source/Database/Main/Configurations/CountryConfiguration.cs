@@ -8,7 +8,7 @@ public class CountryConfiguration : IEntityTypeConfiguration<Country>
 {
     public void Configure(EntityTypeBuilder<Country> builder)
     {
-     
+        builder.ToTable("Countries", schema: "cnf");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name)

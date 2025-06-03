@@ -8,6 +8,8 @@ public class LicenseFeaturesConfiguration : IEntityTypeConfiguration<LicenseFeat
 {
     public void Configure(EntityTypeBuilder<LicenseFeature> builder)
     {
+        
+        builder.ToTable("LicenseFeature", schema: "ath");
         builder.HasKey(e => new { e.LicenseId, e.FeaturePermissionCode });
         
         builder.HasOne(e => e.License)

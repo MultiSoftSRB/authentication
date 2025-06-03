@@ -8,7 +8,7 @@ public class SettlementConfiguration : IEntityTypeConfiguration<Settlement>
 {
     public void Configure(EntityTypeBuilder<Settlement> builder)
     {
-        
+        builder.ToTable("Settlements", schema: "cnf");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name)
@@ -26,7 +26,7 @@ public class SettlementConfiguration : IEntityTypeConfiguration<Settlement>
             .HasDefaultValue(true);
 
         builder.HasOne(x => x.Municipality)
-            .WithMany()
+            .WithMany(s => s.Settlements)
             .HasForeignKey(x => x.MunicipalityId)
             .OnDelete(DeleteBehavior.Cascade);
     }

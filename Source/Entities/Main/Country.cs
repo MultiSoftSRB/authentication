@@ -29,6 +29,6 @@ public class Country
     public float? Longitude { get; set; }
 
     public bool IsActive { get; set; } = true;
-    
-    public ICollection<Region> Regions { get; set; }
+
+    public ICollection<Region> Regions { get; set; } = new List<Region>();
 }

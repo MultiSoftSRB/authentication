@@ -9,6 +9,7 @@ public class RegionConfiguration : IEntityTypeConfiguration<Region>
     public void Configure(EntityTypeBuilder<Region> builder)
     {
       
+        builder.ToTable("Regions", schema: "cnf");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name)
@@ -24,8 +25,8 @@ public class RegionConfiguration : IEntityTypeConfiguration<Region>
         builder.Property(x => x.IsActive)
             .HasDefaultValue(true);
         
-        builder.HasOne<Country>()
-            .WithMany()
+        builder.HasOne(x => x.Country)
+            .WithMany(c => c.Regions)
             .HasForeignKey(x => x.CountryId)
             .OnDelete(DeleteBehavior.Cascade);
         

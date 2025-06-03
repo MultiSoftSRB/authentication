@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MultiSoftSRB.Database.Main;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MultiSoftSRB.Database.Main.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250603091232_RemovingDoubleId")]
+    partial class RemovingDoubleId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,6 +80,9 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Property<int>("SettlementId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("SettlementId1")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Street")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -91,7 +97,9 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("SettlementId");
 
-                    b.ToTable("Addresses", "cnf");
+                    b.HasIndex("SettlementId1");
+
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.AgencyClient", b =>
@@ -146,7 +154,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("CreatedBy");
 
-                    b.ToTable("ApiKeys", "ath");
+                    b.ToTable("ApiKeys");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.ApiKeyPermission", b =>
@@ -159,7 +167,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasKey("ApiKeyId", "ResourcePermissionCode");
 
-                    b.ToTable("ApiKeyPermissions", "ath");
+                    b.ToTable("ApiKeyPermissions");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Company", b =>
@@ -203,7 +211,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("LicenseId1");
 
-                    b.ToTable("Companies", "ath");
+                    b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Country", b =>
@@ -277,7 +285,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.HasIndex("NumericCode")
                         .IsUnique();
 
-                    b.ToTable("Countries", "cnf");
+                    b.ToTable("Countries");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.License", b =>
@@ -305,7 +313,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Licenses", "ath");
+                    b.ToTable("Licenses");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.LicenseFeature", b =>
@@ -318,7 +326,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasKey("LicenseId", "FeaturePermissionCode");
 
-                    b.ToTable("LicenseFeature", "ath");
+                    b.ToTable("LicenseFeature");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Municipality", b =>
@@ -346,11 +354,16 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Property<int>("RegionId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("RegionId1")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Municipalities", "cnf");
+                    b.HasIndex("RegionId1");
+
+                    b.ToTable("Municipalities");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.RefreshToken", b =>
@@ -393,7 +406,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", "ath");
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Region", b =>
@@ -409,6 +422,9 @@ namespace MultiSoftSRB.Database.Main.Migrations
                         .HasColumnType("character varying(10)");
 
                     b.Property<short>("CountryId")
+                        .HasColumnType("smallint");
+
+                    b.Property<short?>("CountryId1")
                         .HasColumnType("smallint");
 
                     b.Property<bool>("IsActive")
@@ -435,7 +451,9 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("CountryId");
 
-                    b.ToTable("Regions", "cnf");
+                    b.HasIndex("CountryId1");
+
+                    b.ToTable("Regions");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.RegistrationRequest", b =>
@@ -485,7 +503,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RegistrationRequests", "ath");
+                    b.ToTable("RegistrationRequests");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Role", b =>
@@ -510,7 +528,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Roles", "ath");
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.RolePermission", b =>
@@ -523,7 +541,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasKey("RoleId", "PagePermissionCode");
 
-                    b.ToTable("RolePermissions", "ath");
+                    b.ToTable("RolePermissions");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Settlement", b =>
@@ -551,6 +569,9 @@ namespace MultiSoftSRB.Database.Main.Migrations
                     b.Property<int>("MunicipalityId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("MunicipalityId1")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -564,7 +585,9 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("MunicipalityId");
 
-                    b.ToTable("Settlements", "cnf");
+                    b.HasIndex("MunicipalityId1");
+
+                    b.ToTable("Settlements");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.User", b =>
@@ -653,7 +676,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", "ath");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.UserCompany", b =>
@@ -681,7 +704,7 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("UserCompanies", "ath");
+                    b.ToTable("UserCompanies");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.UserRole", b =>
@@ -701,16 +724,20 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles", "ath");
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Address", b =>
                 {
                     b.HasOne("MultiSoftSRB.Entities.Main.Settlement", "Settlement")
-                        .WithMany("Addresses")
+                        .WithMany()
                         .HasForeignKey("SettlementId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("MultiSoftSRB.Entities.Main.Settlement", null)
+                        .WithMany("Addresses")
+                        .HasForeignKey("SettlementId1");
 
                     b.Navigation("Settlement");
                 });
@@ -786,11 +813,15 @@ namespace MultiSoftSRB.Database.Main.Migrations
 
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Municipality", b =>
                 {
-                    b.HasOne("MultiSoftSRB.Entities.Main.Region", "Region")
-                        .WithMany("Municipalities")
+                    b.HasOne("MultiSoftSRB.Entities.Main.Region", null)
+                        .WithMany()
                         .HasForeignKey("RegionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("MultiSoftSRB.Entities.Main.Region", "Region")
+                        .WithMany("Municipalities")
+                        .HasForeignKey("RegionId1");
 
                     b.Navigation("Region");
                 });
@@ -816,10 +847,14 @@ namespace MultiSoftSRB.Database.Main.Migrations
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Region", b =>
                 {
                     b.HasOne("MultiSoftSRB.Entities.Main.Country", "Country")
-                        .WithMany("Regions")
+                        .WithMany()
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("MultiSoftSRB.Entities.Main.Country", null)
+                        .WithMany("Regions")
+                        .HasForeignKey("CountryId1");
 
                     b.Navigation("Country");
                 });
@@ -849,10 +884,14 @@ namespace MultiSoftSRB.Database.Main.Migrations
             modelBuilder.Entity("MultiSoftSRB.Entities.Main.Settlement", b =>
                 {
                     b.HasOne("MultiSoftSRB.Entities.Main.Municipality", "Municipality")
-                        .WithMany("Settlements")
+                        .WithMany()
                         .HasForeignKey("MunicipalityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("MultiSoftSRB.Entities.Main.Municipality", null)
+                        .WithMany("Settlements")
+                        .HasForeignKey("MunicipalityId1");
 
                     b.Navigation("Municipality");
                 });

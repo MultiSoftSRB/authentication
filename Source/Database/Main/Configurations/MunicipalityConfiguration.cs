@@ -8,7 +8,7 @@ public class MunicipalityConfiguration : IEntityTypeConfiguration<Municipality>
 {
     public void Configure(EntityTypeBuilder<Municipality> builder)
     {
-
+        builder.ToTable("Municipalities", schema: "cnf");
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name)
@@ -22,8 +22,8 @@ public class MunicipalityConfiguration : IEntityTypeConfiguration<Municipality>
             .HasDefaultValue(true);
 
         // Foreign key with cascade delete
-        builder.HasOne<Region>()
-            .WithMany()
+        builder.HasOne(x => x.Region)
+            .WithMany(m => m.Municipalities )
             .HasForeignKey(x => x.RegionId)
             .OnDelete(DeleteBehavior.Cascade);
         
